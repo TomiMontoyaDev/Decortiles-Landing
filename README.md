@@ -24,6 +24,7 @@ En desarrollo, si Brevo no está configurado, `/api/lead` responde OK y muestra 
 | Variable | Dónde | Obligatoria | Descripción |
 |---|---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | público | sí | `https://proyectos.decorcolombiatiles.com`. Se usa en la URL absoluta de la OG image y en el redirect del double opt-in. |
+| `NEXT_PUBLIC_WHATSAPP` | público | sí | `573128019754`, solo dígitos y con el 57. Lo usan todos los botones de WhatsApp y los mensajes prellenados por perfil. Si falta, se usa ese mismo número. **En las plantillas de `emails/` el número está escrito en el HTML: si cambia, hay que actualizarlo allá también** (enlaces `wa.me/…` y pie de cada correo). |
 | `BREVO_API_KEY` | servidor | sí | API key v3 (Brevo → SMTP & API → API Keys). |
 | `BREVO_LIST_ID` | servidor | sí | Id numérico de la lista "Landing Proyectos". |
 | `BREVO_DOI_TEMPLATE_ID` | servidor | no | Si se define, se activa el double opt-in con esa plantilla. |
@@ -131,6 +132,8 @@ Las cuatro están en `emails/`: HTML con tablas, estilos inline y 600 px de anch
 - Variables: `{{ contact.NOMBRE }}` y `{{ contact.PERFIL }}`. Cada plantilla tiene bloques `{% if contact.PERFIL == "…" %}` con copy distinto por perfil.
 - Las imágenes cargan desde `https://proyectos.decorcolombiatiles.com/images/…`, así que **la landing tiene que estar desplegada antes de enviar**.
 - `02` y `03` tienen bloques marcados para **editar en cada envío** (tendencias del mes, tabla de stock con `[000]` y `[fecha]`).
+- El WhatsApp (`573128019754`) está **escrito en el HTML** de las cuatro plantillas: los enlaces `wa.me/…` y el pie. No lee `NEXT_PUBLIC_WHATSAPP`, así que si el número cambia hay que buscarlo y reemplazarlo en `emails/` y volver a importar las plantillas en Brevo.
+- **Responsive:** por debajo de 600 px, las filas de producto pasan a una columna y los botones ocupan todo el ancho. En la tabla de stock (03) se oculta la columna "Formato" y el formato aparece bajo el nombre del producto. Los clientes que no aceptan media queries muestran la versión de 600 px escalada, que también se lee bien.
 - Antes de enviar, usa *Send a test* con un contacto de prueba de cada perfil.
 
 ### 5.6 Secuencia sugerida (Automations)
@@ -198,21 +201,49 @@ Todas las imágenes pedidas se descargaron bien de decorcolombiatiles.com; **no 
 
 Los originales (PNG de 4–5 MB) se redujeron con `npm run optimize-images` a JPG de 1.200–1.600 px, unos 2,9 MB en total. Las copias originales quedan en `public/images/_originales/`, que no se sube al repo. Para agregar una foto nueva: ponla en `productos/` o `ambientes/` y corre el script.
 
-## 10. Rendimiento y accesibilidad
+## 10. Responsive
+
+Mobile-first, verificado en 320, 360, 375, 390, 414, 768, 1024, 1280, 1440 y 1920 px, en vertical y en horizontal. No hay scroll horizontal en ningún ancho.
+
+- **Tipografía fluida** con `clamp()` (`.t-h1`, `.t-h2`, `.t-h3`, `.t-num` y `.t-lead` en `app/globals.css`). El H1 también se limita por alto (`14dvh`) para teléfonos en horizontal. Las palabras del display nunca se parten.
+- **Hero:**
+  - Móvil: H1, luego formulario y luego subtítulo.
+  - Tablet (768–1023): H1 a todo el ancho y, debajo, texto y formulario en dos columnas.
+  - Desktop: dos columnas, con el formulario fijo a la derecha.
+- **Formulario:**
+  - Inputs de 16 px, para que iOS no haga zoom.
+  - Áreas táctiles de al menos 44×44 px.
+  - Teclados correctos: `type="email"`, `type="tel"` e `inputmode`.
+  - `autocomplete` y `name` en cada campo.
+  - Los intereses son chips de 44 px en grilla, para tocar con el dedo.
+- **Productos:** 1 columna en móvil (tarjeta horizontal), 2 en tablet, 3 en desktop y 4 desde 1280 px.
+- **Galería:** carrusel con scroll-snap en móvil, 2 columnas en tablet y mosaico de 4 en desktop.
+- **WhatsApp flotante** (solo móvil): se oculta mientras hay un formulario o el footer en pantalla, así que nunca tapa el botón de enviar. Respeta `env(safe-area-inset-*)`, gracias a `viewport-fit=cover`. El contenedor también respeta el notch en horizontal.
+- `100dvh` en las secciones de alto completo (`/confirmado`). Hay `sizes` en cada `next/image`: en un móvil de 375 px a 2× los productos bajan a 384 px y la galería a 640 px.
+- Se respeta `prefers-reduced-motion`: se desactivan las animaciones, las transiciones y el scroll suave.
+
+## 11. Rendimiento y accesibilidad
 
 Lighthouse móvil sobre el build local, sin Pixel ni GA cargados:
 
-| Perfil | Performance | Accesibilidad | Best practices |
+| Página | Performance | Accesibilidad | Best practices |
 |---|---|---|---|
-| general | 95 | 100 | 100 |
+| general | 94 | 100 | 100 |
 | constructora | 96 | 100 | 100 |
 | arquitecto | 96 | 100 | 100 |
 | disenador | 96 | 100 | 100 |
 | contratista | 96 | 100 | 100 |
+| /politica-de-datos | 99 | 100 | — |
 
 Hay que repetir la medición con los IDs reales de Pixel y GA y en el dominio final.
 
-## 11. TODO que dependen del cliente
+## 12. GitHub Pages: no aplica
+
+Este proyecto **no se puede servir desde GitHub Pages**: necesita servidor para `/api/lead` (Brevo con una API key secreta), para el middleware de perfiles y para la optimización de imágenes. Se despliega en **Vercel** (sección 7).
+
+El archivo `.nojekyll` de la raíz evita que Pages pase el repo por Jekyll. Sin él, el build de Pages falla con `Liquid syntax error … 'if' tag was never closed`, porque Liquid interpreta las etiquetas `{% if %}` de Brevo del README y de `emails/`. Lo recomendado es **desactivar Pages** en el repo: *Settings → Pages → Source: None*.
+
+## 13. TODO que dependen del cliente
 
 **Antes de lanzar pauta:**
 - [ ] Confirmar la promesa **"un solo lote para toda la torre"** y **"separamos el metraje completo del mismo lote"** (`content/perfiles.ts`, hero de constructora y bloque 2 de Problema → Solución; también aparece en los emails 02 y 03).
@@ -221,7 +252,7 @@ Hay que repetir la medición con los IDs reales de Pixel y GA y en el dominio fi
 - [ ] Confirmar las condiciones de **despacho** desde Medellín y Barranquilla (hero de contratista).
 - [ ] Completar el **acabado** de Black Empire, Vibren Sky, Fachada Chennai y Cristanac Opal Blue. El sitio no lo especifica y hoy aparece "Consultar" (`content/productos.ts`).
 - [ ] Confirmar que `ambientes/interior.jpg` es un **proyecto real**. Parece un render o foto de stock y está en "Proyectos instalados".
-- [ ] Definir qué **línea de WhatsApp** atiende proyectos y si cada número corresponde a una sede (`content/negocio.ts`). Hoy los CTA usan +57 312 801 9754.
+- [ ] Confirmar la **línea de WhatsApp** de proyectos. Hoy es +57 312 801 9754 (`NEXT_PUBLIC_WHATSAPP`); la línea +57 301 331 0178 ya no aparece en la landing ni en los correos.
 - [ ] **Revisión legal** de `/politica-de-datos`: completar el NIT y la fecha de vigencia y validar con un abogado.
 - [ ] Llenar las tablas de stock (`[000]`, `[fecha]`) y revisar las tendencias del mes en los emails 02 y 03 antes de cada envío.
 
@@ -230,7 +261,7 @@ Hay que repetir la medición con los IDs reales de Pixel y GA y en el dominio fi
 - [ ] IDs de Meta Pixel, GA4 y la conversión de Google Ads.
 - [ ] Plan Pro de Vercel y el CNAME en cPanel.
 
-## 12. Estructura
+## 14. Estructura
 
 ```
 app/
@@ -241,7 +272,7 @@ app/
   politica-de-datos/      texto base Ley 1581 (revisión legal pendiente)
   confirmado/             destino del double opt-in
   opengraph-image.tsx     OG image 1200×630 generada en build
-components/               Landing (secciones), LeadForm (2 pasos), StickyCta, WhatsAppLink, Analytics…
+components/               Landing (secciones), LeadForm (2 pasos), WhatsAppFab, WhatsAppLink, Analytics…
 content/                  perfiles.ts · productos.ts · negocio.ts   ← todo el copy editable
 lib/                      lead-schema (zod) · brevo · tracking · utm · rate-limit · token · meta-capi
 emails/                   01–04 plantillas HTML para Brevo
