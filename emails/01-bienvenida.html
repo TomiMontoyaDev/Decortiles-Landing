@@ -23,6 +23,9 @@
     .col { display:block !important; width:100% !important; }
     .col-img img { width:100% !important; height:auto !important; }
     .h1 { font-size:38px !important; line-height:40px !important; }
+    .btn { width:100% !important; }
+    .btn a { display:block !important; }
+    .col-txt { padding:18px 0 0 0 !important; }
   }
 </style>
 </head>
@@ -125,7 +128,7 @@
     <!-- CTA WhatsApp -->
     <tr><td class="pad" align="center" style="padding:8px 40px 40px;">
       <p style="margin:0 0 18px; font:16px/24px Arial,sans-serif; color:#0a1424;">¿Tienes obra andando? No esperes el próximo correo.</p>
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+      <table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0"><tr>
         <td align="center" bgcolor="#c81d14" style="background:#c81d14;">
           <a href="https://wa.me/573128019754?text={% if contact.PERFIL == 'constructora' %}Hola%20DECORTILES%2C%20soy%20de%20una%20constructora.%20Necesito%20cotizar%20acabados%20para%20un%20proyecto.{% elif contact.PERFIL == 'arquitecto' %}Hola%20DECORTILES%2C%20soy%20arquitecto%2Fa.%20Necesito%20fichas%20t%C3%A9cnicas%20y%20stock%20para%20un%20proyecto.{% elif contact.PERFIL == 'disenador' %}Hola%20DECORTILES%2C%20soy%20dise%C3%B1ador%2Fa.%20Quiero%20ver%20muestras%20y%20stock%20para%20un%20proyecto.{% elif contact.PERFIL == 'contratista' %}Hola%20DECORTILES%2C%20soy%20contratista.%20Necesito%20precio%20por%20volumen.{% else %}Hola%20DECORTILES%2C%20quiero%20cotizar%20acabados%20para%20un%20proyecto.{% endif %}" style="display:inline-block; padding:16px 32px; font:bold 16px/20px Arial,sans-serif; color:#ffffff; text-decoration:none;">Cotizar por WhatsApp →</a>
         </td>
@@ -136,7 +139,7 @@
     <tr><td class="pad" style="padding:28px 40px; background:#0a1424; font:12px/19px Arial,sans-serif; color:#93a0b5;">
       <strong style="color:#f2eee6;">Decortiles Cerámica S.A.S.</strong><br>
       Medellín: Cl. 50 #56B-22, La Candelaria · Barranquilla: Cra. 35 #29B-42 · Cra. 30 #24-58<br>
-      WhatsApp +57 312 801 9754 · +57 301 331 0178 · L–V 8:00–18:00 · Sáb 9:00–17:00<br><br>
+      WhatsApp +57 312 801 9754 · L–V 8:00–18:00 · Sáb 9:00–17:00<br><br>
       Recibes este correo porque te registraste en proyectos.decorcolombiatiles.com.
       <a href="{{ unsubscribe }}" style="color:#f2eee6;">Darte de baja</a>
     </td></tr>
