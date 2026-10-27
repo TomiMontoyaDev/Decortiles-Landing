@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { asset } from "@/lib/config";
 import { NEGOCIO } from "@/content/negocio";
 import { PROBLEMAS, type PerfilCopy } from "@/content/perfiles";
 import { AMBIENTES, PRODUCTOS } from "@/content/productos";
@@ -31,7 +32,7 @@ export default function Landing({ perfil }: { perfil: PerfilCopy }) {
 function Marca() {
   return (
     <div className="flex items-center gap-2.5">
-      <Image src="/images/marca.png" alt="" width={40} height={40} className="size-9 sm:size-10" priority />
+      <Image src={asset("/images/marca.png")} alt="" width={40} height={40} className="size-9 sm:size-10" priority />
       <span className="display text-[1.3rem] tracking-[0.04em] text-bone sm:text-2xl">DECORTILES</span>
     </div>
   );
@@ -49,7 +50,7 @@ function Hero({ perfil }: { perfil: PerfilCopy }) {
       {/* Foto de producto a sangre: tenue detrás del texto en móvil/tablet, mitad derecha en desktop. */}
       <div className="absolute inset-0 -z-10 lg:left-auto lg:w-[52%]">
         <Image
-          src="/images/productos/black-gold.jpg"
+          src={asset("/images/productos/black-gold.jpg")}
           alt=""
           fill
           priority
@@ -188,7 +189,7 @@ function Productos() {
               <article className="grid h-full grid-cols-[7.25rem_minmax(0,1fr)] bg-ink min-[400px]:grid-cols-[8.5rem_minmax(0,1fr)] sm:block">
                 <div className="relative aspect-[3/4] overflow-hidden bg-black">
                   <Image
-                    src={p.imagen}
+                    src={asset(p.imagen)}
                     alt={p.alt}
                     fill
                     sizes="(min-width: 1280px) 300px, (min-width: 1024px) 31vw, (min-width: 640px) 46vw, 136px"
@@ -296,7 +297,7 @@ function Galeria() {
             className={`relative aspect-[4/3] w-[85%] shrink-0 snap-center overflow-hidden bg-ink-2 min-[480px]:w-[70%] md:aspect-auto md:w-auto ${spans[i] ?? ""}`}
           >
             <Image
-              src={a.src}
+              src={asset(a.src)}
               alt={a.alt}
               fill
               sizes={
@@ -368,7 +369,7 @@ function Pie() {
     <footer data-evita-fab className="border-t border-white/10 bg-black/30 pt-8 pb-[max(2rem,calc(1rem+env(safe-area-inset-bottom)))]">
       <div className="contenedor flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="w-fit bg-white px-3 py-2">
-          <Image src="/images/logo-card.png" alt="DECORTILES" width={84} height={56} className="h-14 w-auto" />
+          <Image src={asset("/images/logo-card.png")} alt="DECORTILES" width={84} height={56} className="h-14 w-auto" />
         </div>
         <div className="text-xs leading-relaxed text-steel sm:text-right">
           <p>

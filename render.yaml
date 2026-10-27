@@ -1,0 +1,40 @@
+# Render Blueprint: la landing completa (con /api/lead y Brevo) como Web Service de Node.
+# Render → New → Blueprint → elegir este repo. Las variables con `sync: false` se piden
+# en el panel al crear el servicio (no se guardan en git).
+services:
+  - type: web
+    name: decortiles-landing
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: NEXT_PUBLIC_WHATSAPP
+        value: "573128019754"
+      # Orígenes que pueden enviar el formulario a esta API (la versión de GitHub Pages).
+      - key: LEAD_ALLOWED_ORIGINS
+        value: https://tomimontoyadev.github.io
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_LIST_ID
+        sync: false
+      - key: BREVO_DOI_TEMPLATE_ID
+        sync: false
+      - key: LEAD_NOTIFY_EMAIL
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        value: contacto@decorcolombiatiles.com
+      - key: BREVO_SENDER_NAME
+        value: DECORTILES
+      - key: NEXT_PUBLIC_META_PIXEL_ID
+        sync: false
+      - key: NEXT_PUBLIC_GA_ID
+        sync: false
+      - key: NEXT_PUBLIC_GADS_CONVERSION
+        sync: false

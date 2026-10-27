@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Inter } from "next/font/google";
 import Analytics from "@/components/Analytics";
+import { asset } from "@/lib/config";
 import "./globals.css";
 
 const anton = Anton({ weight: "400", subsets: ["latin"], display: "swap", variable: "--font-anton" });
@@ -9,7 +10,8 @@ const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-int
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://proyectos.decorcolombiatiles.com";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  // Solo el origen: Next agrega el basePath a las rutas de metadata por su cuenta.
+  metadataBase: new URL(new URL(SITE_URL).origin),
   title: "DECORTILES Proyectos · Porcelanato y cerámica con stock local",
   description:
     "Importación directa de porcelanato 60×120, pisos de alto tránsito, revestimientos y sanitarios. Stock en Medellín y Barranquilla para constructoras, arquitectos, diseñadores y contratistas.",
@@ -24,7 +26,7 @@ export const metadata: Metadata = {
     description: "Porcelanato, cerámica y sanitarios de importación directa. Stock en Medellín y Barranquilla.",
   },
   twitter: { card: "summary_large_image" },
-  icons: { icon: "/images/logo.png", apple: "/images/logo.png" },
+  icons: { icon: asset("/images/logo.png"), apple: asset("/images/logo.png") },
 };
 
 export const viewport: Viewport = {

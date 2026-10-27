@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Landing from "@/components/Landing";
 import { PERFILES, PERFILES_PAUTA, type PerfilPauta } from "@/content/perfiles";
+import { asset } from "@/lib/config";
 
 export const dynamicParams = false;
 
@@ -22,15 +23,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: `${titulo} · DECORTILES`,
     // La URL pública es la de "/?perfil=…"; /p/* es interna.
-    alternates: { canonical: `/?perfil=${perfil.id}` },
+    alternates: { canonical: asset(`/?perfil=${perfil.id}`) },
     // Al redefinir openGraph se pierde la imagen heredada de app/opengraph-image: se declara explícita.
     openGraph: {
       title: titulo,
       description: perfil.subtitulo,
-      url: `/?perfil=${perfil.id}`,
-      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "DECORTILES" }],
+      url: asset(`/?perfil=${perfil.id}`),
+      images: [{ url: asset("/opengraph-image"), width: 1200, height: 630, alt: "DECORTILES" }],
     },
-    twitter: { card: "summary_large_image", images: ["/opengraph-image"] },
+    twitter: { card: "summary_large_image", images: [asset("/opengraph-image")] },
   };
 }
 

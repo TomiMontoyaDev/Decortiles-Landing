@@ -237,11 +237,30 @@ Lighthouse móvil sobre el build local, sin Pixel ni GA cargados:
 
 Hay que repetir la medición con los IDs reales de Pixel y GA y en el dominio final.
 
-## 12. GitHub Pages: no aplica
+## 12. Dónde se despliega: Render, Vercel y GitHub Pages
 
-Este proyecto **no se puede servir desde GitHub Pages**: necesita servidor para `/api/lead` (Brevo con una API key secreta), para el middleware de perfiles y para la optimización de imágenes. Se despliega en **Vercel** (sección 7).
+| Plataforma | Tipo | Qué funciona |
+|---|---|---|
+| **Render** | **Web Service** (no Static Site) | Todo: landing, perfiles, formulario con Brevo, notificaciones e imágenes optimizadas. |
+| **Vercel** | Proyecto Next.js | Todo (sección 7). |
+| **GitHub Pages** | Export estático por GitHub Actions | La landing completa. El formulario envía a la API de Render o Vercel (`LEAD_ENDPOINT`). |
 
-El archivo `.nojekyll` de la raíz evita que Pages pase el repo por Jekyll. Sin él, el build de Pages falla con `Liquid syntax error … 'if' tag was never closed`, porque Liquid interpreta las etiquetas `{% if %}` de Brevo del README y de `emails/`. Lo recomendado es **desactivar Pages** en el repo: *Settings → Pages → Source: None*.
+### Render (Web Service)
+- **Opción A, Blueprint:** New → **Blueprint** → elegir este repo. Usa `render.yaml` y pide las variables secretas.
+- **Opción B, manual:** New → **Web Service** → este repo, con:
+  - Runtime: **Node**
+  - Build Command: `npm ci --include=dev && npm run build`
+  - Start Command: `npm start`
+  - Variables: las de la sección 2, `NODE_VERSION=22` y `LEAD_ALLOWED_ORIGINS=https://tomimontoyadev.github.io`.
+- Si el servicio se creó como **Static Site**, ese es el "Not Found": hay que crear un **Web Service** y borrar el Static Site.
+- El plan gratis de Render se duerme tras 15 minutos sin tráfico; la primera visita tarda unos 30–50 s. Para pauta pagada conviene un plan pago.
+
+### GitHub Pages
+1. Settings → Pages → Build and deployment → **Source: GitHub Actions** (una sola vez). Mientras siga en "Deploy from a branch", Pages publica el repo tal cual y la raíz da 404.
+2. Settings → Secrets and variables → Actions → **Variables** → `LEAD_ENDPOINT` = `https://<tu-servicio>.onrender.com/api/lead`. Opcionales: `WHATSAPP`, `META_PIXEL_ID`, `GA_ID` y `GADS_CONVERSION`.
+3. Cada push a `main` corre `.github/workflows/pages.yml`, que hace `npm run build:static` y publica `out/` en `https://tomimontoyadev.github.io/Decortiles-Landing/`.
+
+**Cómo funciona el modo estático:** `STATIC_EXPORT=1` genera HTML puro con `basePath`. La API y el middleware (`*.api.ts`) se excluyen con `pageExtensions`, `?perfil=` redirige a `/p/<perfil>/` conservando las UTMs, y las imágenes se sirven sin optimizar. El `.nojekyll` evita que Jekyll procese las etiquetas `{% if %}` de Brevo.
 
 ## 13. TODO que dependen del cliente
 
@@ -268,7 +287,7 @@ app/
   layout.tsx              fuentes (Anton + Inter, display swap), metadata, noindex
   page.tsx                versión general
   p/[perfil]/page.tsx     versiones por perfil (estáticas)
-  api/lead/route.ts       backend: validación, anti-spam, Brevo, notificación, CAPI
+  api/lead/route.api.ts   backend (solo modo servidor): validación, anti-spam, Brevo, notificación, CAPI
   politica-de-datos/      texto base Ley 1581 (revisión legal pendiente)
   confirmado/             destino del double opt-in
   opengraph-image.tsx     OG image 1200×630 generada en build
@@ -276,7 +295,9 @@ components/               Landing (secciones), LeadForm (2 pasos), WhatsAppFab, 
 content/                  perfiles.ts · productos.ts · negocio.ts   ← todo el copy editable
 lib/                      lead-schema (zod) · brevo · tracking · utm · rate-limit · token · meta-capi
 emails/                   01–04 plantillas HTML para Brevo
-middleware.ts             ?perfil= → /p/[perfil]
+middleware.api.ts         ?perfil= → /p/[perfil] (solo modo servidor)
+render.yaml               Blueprint de Render (Web Service)
+.github/workflows/        pages.yml: export estático a GitHub Pages
 assets/fonts/             Anton (OFL) para la OG image
 scripts/optimize-images.mjs
 ```

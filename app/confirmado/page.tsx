@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { NEGOCIO, whatsappUrl } from "@/content/negocio";
+import { asset } from "@/lib/config";
 
 // Destino del enlace de double opt-in de Brevo (redirectionUrl).
 export const metadata: Metadata = { title: "Correo confirmado · DECORTILES" };
@@ -9,7 +10,7 @@ export const metadata: Metadata = { title: "Correo confirmado · DECORTILES" };
 export default function Confirmado() {
   return (
     <main className="contenedor flex min-h-dvh max-w-2xl flex-col justify-center pt-[max(4rem,env(safe-area-inset-top))] pb-[max(4rem,env(safe-area-inset-bottom))]">
-      <Image src="/images/marca.png" alt="" width={56} height={56} />
+      <Image src={asset("/images/marca.png")} alt="" width={56} height={56} />
       <p className="rotulo mt-8 text-signal-soft">Suscripción activa</p>
       <h1 className="display t-h1 mt-3 text-bone">Correo confirmado.</h1>
       <p className="mt-5 text-lg leading-relaxed text-bone/80">

@@ -7,6 +7,8 @@ import { ImageResponse } from "next/og";
 export const alt = "DECORTILES · Acabados con stock. No con promesas.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+// Se genera una sola vez en el build (necesario también para el export estático).
+export const dynamic = "force-static";
 
 const dataUri = async (rel: string, mime: string) =>
   `data:${mime};base64,${(await readFile(path.join(process.cwd(), "public", rel))).toString("base64")}`;

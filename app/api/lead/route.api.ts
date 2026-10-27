@@ -35,7 +35,38 @@ function ipDe(req: NextRequest) {
   return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "desconocida";
 }
 
+/**
+ * CORS para la versión estática (GitHub Pages / Render Static Site), que envía el
+ * formulario a esta API desde otro dominio. Solo se aceptan los orígenes listados en
+ * LEAD_ALLOWED_ORIGINS (separados por coma), p. ej. https://tomimontoyadev.github.io
+ */
+function cabecerasCors(req: NextRequest): Record<string, string> {
+  const origen = req.headers.get("origin");
+  const permitidos = (process.env.LEAD_ALLOWED_ORIGINS ?? "")
+    .split(",")
+    .map((s) => s.trim().replace(/\/$/, ""))
+    .filter(Boolean);
+  if (!origen || !permitidos.includes(origen)) return {};
+  return {
+    "Access-Control-Allow-Origin": origen,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "content-type",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  };
+}
+
+export function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, { status: 204, headers: cabecerasCors(req) });
+}
+
 export async function POST(req: NextRequest) {
+  const res = await manejar(req);
+  for (const [k, v] of Object.entries(cabecerasCors(req))) res.headers.set(k, v);
+  return res;
+}
+
+async function manejar(req: NextRequest) {
   const ip = ipDe(req);
   if (!permitido(ip)) {
     return json({ ok: false, error: "Demasiados intentos. Espera unos minutos o escríbenos por WhatsApp." }, 429);

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { PerfilId } from "@/content/perfiles";
+import { LEAD_ENDPOINT } from "@/lib/config";
 import { OPCIONES, leadCamposSchema, perfilamientoSchema } from "@/lib/lead-schema";
 import { nuevoEventId, trackLead } from "@/lib/tracking";
 import { capturarTracking } from "@/lib/utm";
@@ -108,7 +109,7 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
     setEnviando(true);
     const eventId = nuevoEventId();
     try {
-      const res = await fetch("/api/lead", {
+      const res = await fetch(LEAD_ENDPOINT, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -124,7 +125,7 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
       if (!res.ok || !data.ok) {
         const e = data.campos ? primerosErrores(data.campos) : {};
         setErrores(e);
-        setErrorGeneral(data.error ?? "No pudimos registrar tus datos. Intenta de nuevo.");
+        setErrorGeneral(data.error ?? "No pudimos registrar tus datos. Intenta de nuevo o escríbenos por WhatsApp.");
         setEnviando(false);
         return;
       }
@@ -407,7 +408,7 @@ function Perfilamiento({ id }: { id: string }) {
     }
     setEnviando(true);
     try {
-      const res = await fetch("/api/lead", {
+      const res = await fetch(LEAD_ENDPOINT, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(r.data),
