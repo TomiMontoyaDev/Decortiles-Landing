@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+  DECORTILES · 01 Bienvenida (día 0)
+  Asunto:      Estás dentro. Esto es lo que te va a llegar.
+  Preheader:   Stock, tendencias y fichas técnicas. Sin relleno.
+  Variables:   {{ contact.NOMBRE }}, {{ contact.PERFIL }} (constructora | arquitecto | disenador | contratista)
+  Imágenes:    servidas desde https://proyectos.decorcolombiatiles.com/images/ (deben estar desplegadas).
+-->
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<title>Estás dentro</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; padding:0; background:#e4dfd4; }
+  a { color:#c81d14; }
+  @media only screen and (max-width:620px) {
+    .wrap { width:100% !important; }
+    .pad { padding-left:20px !important; padding-right:20px !important; }
+    .col { display:block !important; width:100% !important; }
+    .col-img img { width:100% !important; height:auto !important; }
+    .h1 { font-size:38px !important; line-height:40px !important; }
+  }
+</style>
+</head>
+<body style="margin:0; padding:0; background:#e4dfd4;">
+<div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">Stock, tendencias y fichas técnicas. Sin relleno.&#8202;&#847;&#8202;&#847;&#8202;&#847;&#8202;&#847;&#8202;&#847;&#8202;&#847;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#e4dfd4;">
+<tr><td align="center" style="padding:24px 10px;">
+
+  <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; background:#ffffff;">
+
+    <!-- Logo -->
+    <tr><td class="pad" style="padding:22px 40px 18px; background:#ffffff;">
+      <a href="https://proyectos.decorcolombiatiles.com/?utm_source=brevo&amp;utm_medium=email&amp;utm_campaign=bienvenida"><img src="https://proyectos.decorcolombiatiles.com/images/logo-card.png" width="120" alt="DECORTILES" style="display:block; width:120px; height:auto; border:0;"></a>
+    </td></tr>
+    <tr><td style="height:6px; background:#e1251b; font-size:0; line-height:0;">&nbsp;</td></tr>
+
+    <!-- Hero -->
+    <tr><td class="pad" style="padding:40px 40px 36px; background:#0a1424;">
+      <p style="margin:0 0 12px; font:600 12px/16px Arial,sans-serif; letter-spacing:3px; text-transform:uppercase; color:#f25a50;">Registro confirmado</p>
+      <h1 class="h1" style="margin:0; font-family:'Anton',Impact,'Arial Narrow Bold',sans-serif; font-weight:400; font-size:46px; line-height:48px; text-transform:uppercase; color:#f2eee6;">{{ contact.NOMBRE | default : "Hola" }}, estás dentro.</h1>
+      <p style="margin:18px 0 0; font:16px/25px Arial,sans-serif; color:#c9d0db;">
+        {% if contact.PERFIL == "constructora" %}Vas a saber qué hay en bodega antes de cotizar. Nada de esperar contenedores con la obra andando.
+        {% elif contact.PERFIL == "arquitecto" %}Vas a especificar con fichas reales y stock confirmado. Lo que pones en el plano, existe.
+        {% elif contact.PERFIL == "disenador" %}Vas a ver primero lo que se está usando y lo que acaba de llegar. Con muestra física en showroom.
+        {% elif contact.PERFIL == "contratista" %}Vas a tener precio por volumen y aviso cuando llegue lo que necesitas. Sin vueltas.
+        {% else %}Vas a recibir información de obra: qué hay en bodega, qué llega y qué se está especificando.{% endif %}
+      </p>
+    </td></tr>
+
+    <!-- Qué recibirás -->
+    <tr><td class="pad" style="padding:36px 40px 8px;">
+      <p style="margin:0 0 18px; font:600 12px/16px Arial,sans-serif; letter-spacing:3px; text-transform:uppercase; color:#c81d14;">Qué te va a llegar</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td valign="top" style="width:40px; font-family:'Anton',Impact,sans-serif; font-size:24px; color:#c81d14;">01</td>
+          <td style="padding:0 0 16px; font:15px/22px Arial,sans-serif; color:#0a1424;"><strong>Alertas de stock y llegadas.</strong> Qué entró a bodega en Medellín y Barranquilla, y cuántos m² hay.</td>
+        </tr>
+        <tr>
+          <td valign="top" style="width:40px; font-family:'Anton',Impact,sans-serif; font-size:24px; color:#c81d14;">02</td>
+          <td style="padding:0 0 16px; font:15px/22px Arial,sans-serif; color:#0a1424;"><strong>Tendencias del mes.</strong> Formatos, tonos y acabados que se están especificando en obra.</td>
+        </tr>
+        <tr>
+          <td valign="top" style="width:40px; font-family:'Anton',Impact,sans-serif; font-size:24px; color:#c81d14;">03</td>
+          <td style="padding:0 0 16px; font:15px/22px Arial,sans-serif; color:#0a1424;"><strong>Precios por volumen.</strong> Tarifa de proyecto por metraje total.</td>
+        </tr>
+        <tr>
+          <td valign="top" style="width:40px; font-family:'Anton',Impact,sans-serif; font-size:24px; color:#c81d14;">04</td>
+          <td style="padding:0 0 16px; font:15px/22px Arial,sans-serif; color:#0a1424;"><strong>Fichas técnicas.</strong> Formato, m² y kg por caja, acabado y uso. Listas para pliego.</td>
+        </tr>
+      </table>
+    </td></tr>
+
+    <!-- Productos estrella -->
+    <tr><td class="pad" style="padding:20px 40px 8px; border-top:1px solid #e4dfd4;">
+      <p style="margin:16px 0 4px; font:600 12px/16px Arial,sans-serif; letter-spacing:3px; text-transform:uppercase; color:#c81d14;">En bodega ahora</p>
+      <h2 style="margin:0 0 20px; font-family:'Anton',Impact,sans-serif; font-weight:400; font-size:30px; line-height:34px; text-transform:uppercase; color:#0a1424;">Tres referencias que más se mueven</h2>
+    </td></tr>
+
+    <!-- Producto 1 -->
+    <tr><td class="pad" style="padding:0 40px 20px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a1424;">
+        <tr>
+          <td class="col col-img" width="190" valign="top" style="width:190px;"><img src="https://proyectos.decorcolombiatiles.com/images/productos/black-gold.jpg" width="190" alt="Porcelanato Black Gold 60x120" style="display:block; width:190px; height:auto; border:0;"></td>
+          <td class="col" valign="middle" style="padding:20px 22px;">
+            <p style="margin:0; font:600 11px/14px Arial,sans-serif; letter-spacing:2px; text-transform:uppercase; color:#93a0b5;">Porcelanato · Brillante</p>
+            <p style="margin:6px 0 10px; font-family:'Anton',Impact,sans-serif; font-size:26px; line-height:28px; text-transform:uppercase; color:#f2eee6;">Black Gold</p>
+            <p style="margin:0; font:14px/22px Arial,sans-serif; color:#c9d0db;">60×120 cm · 1,44 m²/caja · 27 kg/caja · 2 piezas<br>Uso: piso y pared</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+    <!-- Producto 2 -->
+    <tr><td class="pad" style="padding:0 40px 20px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a1424;">
+        <tr>
+          <td class="col col-img" width="190" valign="top" style="width:190px;"><img src="https://proyectos.decorcolombiatiles.com/images/productos/venzo-natural-hg.jpg" width="190" alt="Porcelanato Venzo Natural HG 60x120" style="display:block; width:190px; height:auto; border:0;"></td>
+          <td class="col" valign="middle" style="padding:20px 22px;">
+            <p style="margin:0; font:600 11px/14px Arial,sans-serif; letter-spacing:2px; text-transform:uppercase; color:#93a0b5;">Porcelanato · Brillante HG</p>
+            <p style="margin:6px 0 10px; font-family:'Anton',Impact,sans-serif; font-size:26px; line-height:28px; text-transform:uppercase; color:#f2eee6;">Venzo Natural HG</p>
+            <p style="margin:0; font:14px/22px Arial,sans-serif; color:#c9d0db;">60×120 cm · 1,44 m²/caja · 27 kg/caja · 2 piezas<br>Uso: piso y pared</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+    <!-- Producto 3 -->
+    <tr><td class="pad" style="padding:0 40px 28px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a1424;">
+        <tr>
+          <td class="col col-img" width="190" valign="top" style="width:190px;"><img src="https://proyectos.decorcolombiatiles.com/images/productos/piedra-gris.jpg" width="190" alt="Piso Piedra Gris 60x60" style="display:block; width:190px; height:auto; border:0;"></td>
+          <td class="col" valign="middle" style="padding:20px 22px;">
+            <p style="margin:0; font:600 11px/14px Arial,sans-serif; letter-spacing:2px; text-transform:uppercase; color:#93a0b5;">Piso · Mate</p>
+            <p style="margin:6px 0 10px; font-family:'Anton',Impact,sans-serif; font-size:26px; line-height:28px; text-transform:uppercase; color:#f2eee6;">Piedra Gris</p>
+            <p style="margin:0; font:14px/22px Arial,sans-serif; color:#c9d0db;">60×60 cm · 1,80 m²/caja · 32 kg/caja · 5 piezas<br>Uso: piso</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+
+    <!-- CTA WhatsApp -->
+    <tr><td class="pad" align="center" style="padding:8px 40px 40px;">
+      <p style="margin:0 0 18px; font:16px/24px Arial,sans-serif; color:#0a1424;">¿Tienes obra andando? No esperes el próximo correo.</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td align="center" bgcolor="#c81d14" style="background:#c81d14;">
+          <a href="https://wa.me/573128019754?text={% if contact.PERFIL == 'constructora' %}Hola%20DECORTILES%2C%20soy%20de%20una%20constructora.%20Necesito%20cotizar%20acabados%20para%20un%20proyecto.{% elif contact.PERFIL == 'arquitecto' %}Hola%20DECORTILES%2C%20soy%20arquitecto%2Fa.%20Necesito%20fichas%20t%C3%A9cnicas%20y%20stock%20para%20un%20proyecto.{% elif contact.PERFIL == 'disenador' %}Hola%20DECORTILES%2C%20soy%20dise%C3%B1ador%2Fa.%20Quiero%20ver%20muestras%20y%20stock%20para%20un%20proyecto.{% elif contact.PERFIL == 'contratista' %}Hola%20DECORTILES%2C%20soy%20contratista.%20Necesito%20precio%20por%20volumen.{% else %}Hola%20DECORTILES%2C%20quiero%20cotizar%20acabados%20para%20un%20proyecto.{% endif %}" style="display:inline-block; padding:16px 32px; font:bold 16px/20px Arial,sans-serif; color:#ffffff; text-decoration:none;">Cotizar por WhatsApp →</a>
+        </td>
+      </tr></table>
+    </td></tr>
+
+    <!-- Pie -->
+    <tr><td class="pad" style="padding:28px 40px; background:#0a1424; font:12px/19px Arial,sans-serif; color:#93a0b5;">
+      <strong style="color:#f2eee6;">Decortiles Cerámica S.A.S.</strong><br>
+      Medellín: Cl. 50 #56B-22, La Candelaria · Barranquilla: Cra. 35 #29B-42 · Cra. 30 #24-58<br>
+      WhatsApp +57 312 801 9754 · +57 301 331 0178 · L–V 8:00–18:00 · Sáb 9:00–17:00<br><br>
+      Recibes este correo porque te registraste en proyectos.decorcolombiatiles.com.
+      <a href="{{ unsubscribe }}" style="color:#f2eee6;">Darte de baja</a>
+    </td></tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>

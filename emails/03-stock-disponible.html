@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+  DECORTILES · 03 Stock disponible (día 7 y luego semanal/quincenal)
+  Asunto:      En bodega esta semana
+  Asunto alt.: {{ contact.NOMBRE }}, esto hay para despachar hoy
+  Preheader:   m² disponibles por referencia y sede. Separa antes de que se acabe el lote.
+  EDITAR CADA ENVÍO: la tabla de stock (valores entre [corchetes]) y la fecha de corte.
+-->
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<title>En bodega esta semana</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; padding:0; background:#e4dfd4; }
+  a { color:#c81d14; }
+  @media only screen and (max-width:620px) {
+    .wrap { width:100% !important; }
+    .pad { padding-left:16px !important; padding-right:16px !important; }
+    .h1 { font-size:38px !important; line-height:40px !important; }
+    .t td, .t th { padding:10px 6px !important; font-size:13px !important; }
+  }
+</style>
+</head>
+<body style="margin:0; padding:0; background:#e4dfd4;">
+<div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">m² disponibles por referencia y sede. Separa antes de que se acabe el lote.&#8202;&#847;&#8202;&#847;&#8202;&#847;&#8202;&#847;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#e4dfd4;">
+<tr><td align="center" style="padding:24px 10px;">
+  <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; background:#ffffff;">
+
+    <tr><td class="pad" style="padding:22px 40px 18px;">
+      <a href="https://proyectos.decorcolombiatiles.com/?utm_source=brevo&amp;utm_medium=email&amp;utm_campaign=stock"><img src="https://proyectos.decorcolombiatiles.com/images/logo-card.png" width="120" alt="DECORTILES" style="display:block; width:120px; height:auto; border:0;"></a>
+    </td></tr>
+    <tr><td style="height:6px; background:#e1251b; font-size:0; line-height:0;">&nbsp;</td></tr>
+
+    <tr><td class="pad" style="padding:40px 40px 34px; background:#0a1424;">
+      <p style="margin:0 0 12px; font:600 12px/16px Arial,sans-serif; letter-spacing:3px; text-transform:uppercase; color:#f25a50;">Corte de inventario · [fecha]</p>
+      <h1 class="h1" style="margin:0; font-family:'Anton',Impact,'Arial Narrow Bold',sans-serif; font-weight:400; font-size:50px; line-height:52px; text-transform:uppercase; color:#f2eee6;">En bodega esta semana</h1>
+      <p style="margin:18px 0 0; font:16px/25px Arial,sans-serif; color:#c9d0db;">
+        {% if contact.PERFIL == "constructora" %}Metraje disponible por lote. Si tu torre necesita más de lo que ves, pregunta: separamos y programamos llegadas.
+        {% elif contact.PERFIL == "arquitecto" %}Antes de cerrar la especificación, revisa qué está disponible hoy y en qué sede.
+        {% elif contact.PERFIL == "disenador" %}Lo que puedes ver y tocar esta semana en showroom, con stock para entregar.
+        {% elif contact.PERFIL == "contratista" %}Lo que hay para despachar ya. Pide, separa e instala.
+        {% else %}Lo que hay en bodega para despachar ya, por referencia y sede.{% endif %}
+      </p>
+    </td></tr>
+
+    <!-- TABLA DE STOCK: editar valores en cada envío -->
+    <tr><td class="pad" style="padding:32px 40px 8px;">
+      <table role="presentation" class="t" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; font-family:Arial,sans-serif;">
+        <tr style="background:#0a1424;">
+          <th align="left" style="padding:12px 10px; font:bold 11px/14px Arial,sans-serif; letter-spacing:1px; text-transform:uppercase; color:#f2eee6;">Producto</th>
+          <th align="left" style="padding:12px 10px; font:bold 11px/14px Arial,sans-serif; letter-spacing:1px; text-transform:uppercase; color:#f2eee6;">Formato</th>
+          <th align="right" style="padding:12px 10px; font:bold 11px/14px Arial,sans-serif; letter-spacing:1px; text-transform:uppercase; color:#f2eee6;">m² disp.</th>
+          <th align="left" style="padding:12px 10px; font:bold 11px/14px Arial,sans-serif; letter-spacing:1px; text-transform:uppercase; color:#f2eee6;">Sede</th>
+        </tr>
+        <tr style="border-bottom:1px solid #e4dfd4;">
+          <td style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">Black Gold</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">60×120</td>
+          <td align="right" style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">[000]</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">[Medellín]</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e4dfd4; background:#f7f5f0;">
+          <td style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">Venzo Natural HG</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">60×120</td>
+          <td align="right" style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">[000]</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">[Barranquilla]</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e4dfd4;">
+          <td style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">Piedra Gris</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">60×60</td>
+          <td align="right" style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">[000]</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">[Ambas]</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e4dfd4; background:#f7f5f0;">
+          <td style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">Fachada Chennai</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">30×60</td>
+          <td align="right" style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">[000]</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">[Medellín]</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e4dfd4;">
+          <td style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">Cristanac Opal Blue</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">30×30</td>
+          <td align="right" style="padding:12px 10px; font:bold 14px/18px Arial,sans-serif; color:#0a1424;">[000]</td>
+          <td style="padding:12px 10px; font:14px/18px Arial,sans-serif; color:#3a4559;">[Barranquilla]</td>
+        </tr>
+      </table>
+      <p style="margin:12px 0 0; font:12px/18px Arial,sans-serif; color:#5a6578;">Stock al corte indicado. Se mueve rápido: confirmamos disponibilidad al separar.</p>
+    </td></tr>
+
+    <!-- Llegadas (opcional: borrar si no hay) -->
+    <tr><td class="pad" style="padding:24px 40px 8px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-left:4px solid #e1251b; background:#f2eee6;">
+        <tr><td style="padding:16px 18px; font:14px/21px Arial,sans-serif; color:#0a1424;">
+          <strong>Próxima llegada:</strong> [referencia] · [formato] · [fecha estimada]. Responde este correo o escríbenos para separar antes de que llegue.
+        </td></tr>
+      </table>
+    </td></tr>
+
+    <tr><td class="pad" align="center" style="padding:28px 40px 40px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td align="center" bgcolor="#c81d14" style="background:#c81d14;">
+          <a href="https://wa.me/573128019754?text=Hola%20DECORTILES%2C%20quiero%20separar%20material%20del%20correo%20de%20stock%3A%20" style="display:inline-block; padding:18px 36px; font:bold 17px/20px Arial,sans-serif; color:#ffffff; text-decoration:none;">Separa el material →</a>
+        </td>
+      </tr></table>
+      <p style="margin:14px 0 0; font:13px/19px Arial,sans-serif; color:#5a6578;">Te respondemos por WhatsApp en horario hábil.</p>
+    </td></tr>
+
+    <tr><td class="pad" style="padding:28px 40px; background:#0a1424; font:12px/19px Arial,sans-serif; color:#93a0b5;">
+      <strong style="color:#f2eee6;">Decortiles Cerámica S.A.S.</strong><br>
+      Medellín: Cl. 50 #56B-22, La Candelaria · Barranquilla: Cra. 35 #29B-42 · Cra. 30 #24-58<br>
+      WhatsApp +57 312 801 9754 · +57 301 331 0178 · L–V 8:00–18:00 · Sáb 9:00–17:00<br><br>
+      Recibes este correo porque te registraste en proyectos.decorcolombiatiles.com.
+      <a href="{{ unsubscribe }}" style="color:#f2eee6;">Darte de baja</a>
+    </td></tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>

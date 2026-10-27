@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+  DECORTILES · 04 Reactivación (contactos sin abrir en 30 días)
+  Asunto:      ¿Sigues con obra?
+  Asunto alt.: {{ contact.NOMBRE }}, ¿te seguimos escribiendo?
+  Preheader:   Un clic y seguimos. Si no, te sacamos de la lista.
+  Lógica: quien hace clic en "Sí, sigo" queda marcado como clicker (Brevo) y sale del segmento
+  inactivo. Si tampoco abre este en 14 días, se recomienda moverlo a una lista de inactivos.
+-->
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<title>¿Sigues con obra?</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; padding:0; background:#e4dfd4; }
+  a { color:#c81d14; }
+  @media only screen and (max-width:620px) {
+    .wrap { width:100% !important; }
+    .pad { padding-left:20px !important; padding-right:20px !important; }
+    .h1 { font-size:44px !important; line-height:46px !important; }
+    .btn { display:block !important; width:100% !important; }
+  }
+</style>
+</head>
+<body style="margin:0; padding:0; background:#e4dfd4;">
+<div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">Un clic y seguimos. Si no, te sacamos de la lista.&#8202;&#847;&#8202;&#847;&#8202;&#847;&#8202;&#847;&#8202;&#847;</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#e4dfd4;">
+<tr><td align="center" style="padding:24px 10px;">
+  <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; background:#0a1424;">
+
+    <tr><td style="height:6px; background:#e1251b; font-size:0; line-height:0;">&nbsp;</td></tr>
+
+    <tr><td class="pad" style="padding:48px 40px 12px;">
+      <p style="margin:0 0 14px; font:600 12px/16px Arial,sans-serif; letter-spacing:3px; text-transform:uppercase; color:#f25a50;">DECORTILES</p>
+      <h1 class="h1" style="margin:0; font-family:'Anton',Impact,'Arial Narrow Bold',sans-serif; font-weight:400; font-size:58px; line-height:58px; text-transform:uppercase; color:#f2eee6;">¿Sigues<br>con obra?</h1>
+      <p style="margin:22px 0 0; font:17px/26px Arial,sans-serif; color:#c9d0db;">
+        {{ contact.NOMBRE | default : "Hola" }}, hace un mes no abres nuestros correos. Puede que el proyecto haya terminado, o que te estemos escribiendo lo que no necesitas.
+      </p>
+      <p style="margin:16px 0 0; font:17px/26px Arial,sans-serif; color:#c9d0db;">
+        {% if contact.PERFIL == "constructora" %}Si arrancas nueva etapa o nueva torre, te avisamos qué hay en bodega antes de que cotices.
+        {% elif contact.PERFIL == "arquitecto" %}Si estás especificando algo nuevo, te mandamos fichas y stock confirmado.
+        {% elif contact.PERFIL == "disenador" %}Si tienes proyecto nuevo, te mostramos lo que acaba de llegar al showroom.
+        {% elif contact.PERFIL == "contratista" %}Si tienes obra nueva, te pasamos precio por volumen el mismo día.
+        {% else %}Si tienes un proyecto nuevo, te mandamos lo que hay en bodega.{% endif %}
+      </p>
+    </td></tr>
+
+    <tr><td class="pad" style="padding:32px 40px 16px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+        <td class="btn" align="center" bgcolor="#c81d14" style="background:#c81d14;">
+          <a href="https://proyectos.decorcolombiatiles.com/?perfil={{ contact.PERFIL }}&amp;utm_source=brevo&amp;utm_medium=email&amp;utm_campaign=reactivacion" style="display:block; padding:18px 24px; font:bold 17px/20px Arial,sans-serif; color:#ffffff; text-decoration:none;">Sí, sigo. Mándame lo que hay →</a>
+        </td>
+      </tr></table>
+    </td></tr>
+    <tr><td class="pad" style="padding:0 40px 16px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+        <td class="btn" align="center" style="border:2px solid #f2eee6;">
+          <a href="https://wa.me/573128019754?text=Hola%20DECORTILES%2C%20tengo%20un%20proyecto%20nuevo%20y%20quiero%20cotizar." style="display:block; padding:16px 24px; font:bold 16px/20px Arial,sans-serif; color:#f2eee6; text-decoration:none;">Tengo proyecto: hablemos por WhatsApp</a>
+        </td>
+      </tr></table>
+    </td></tr>
+    <tr><td class="pad" style="padding:8px 40px 44px; font:14px/21px Arial,sans-serif; color:#93a0b5;">
+      ¿Ya no te sirve? <a href="{{ unsubscribe }}" style="color:#f2eee6;">Sácame de la lista</a>. Sin rencores.
+    </td></tr>
+
+    <tr><td class="pad" style="padding:24px 40px; border-top:1px solid #1a2a45; font:12px/19px Arial,sans-serif; color:#93a0b5;">
+      <strong style="color:#f2eee6;">Decortiles Cerámica S.A.S.</strong> · Medellín · Barranquilla<br>
+      WhatsApp +57 312 801 9754 · +57 301 331 0178<br>
+      Recibes este correo porque te registraste en proyectos.decorcolombiatiles.com.
+    </td></tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>
