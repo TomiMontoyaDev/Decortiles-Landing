@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta derivada del logo: navy casi negro + rojo de la "T". */
+  --color-ink: #0a1424;
+  --color-ink-2: #101d33;
+  --color-ink-3: #1a2a45;
+  --color-bone: #f2eee6;
+  --color-bone-2: #e4dfd4;
+  --color-steel: #93a0b5;
+  --color-signal: #e1251b;
+  --color-signal-strong: #c81d14;
+  /* Rojo aclarado para texto pequeño sobre fondo oscuro (contraste AA). */
+  --color-signal-soft: #f25a50;
+  --color-error: #b3140b;
+
+  --font-display: var(--font-anton), "Arial Narrow", Impact, sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --animate-trazo: trazo 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes trazo {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-signal);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .display {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.005em;
+    line-height: 0.92;
+  }
+  .rotulo {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .campo {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: 2px;
+    border: 1.5px solid #c9c2b4;
+    background: #fff;
+    padding: 0.7rem 0.85rem;
+    font-size: 1rem; /* 16px: evita el zoom automático en iOS */
+    color: var(--color-ink);
+    transition: border-color 0.15s;
+  }
+  .campo:focus {
+    outline: none;
+    border-color: var(--color-ink);
+    box-shadow: 0 0 0 3px rgb(10 20 36 / 0.12);
+  }
+  .campo[aria-invalid="true"] {
+    border-color: var(--color-error);
+  }
+  select.campo {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230a1424' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
