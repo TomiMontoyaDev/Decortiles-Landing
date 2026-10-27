@@ -28,8 +28,10 @@ type Valores = {
 type Campo = keyof Valores;
 type Errores = Partial<Record<Campo, string>>;
 
-const ORDEN: Campo[] = ["nombre", "email", "celular", "perfil", "ciudad", "autorizacion"];
+const ORDEN: Campo[] = ["nombre", "celular", "email", "perfil", "ciudad", "autorizacion"];
 const ERROR_RED = "No hay conexión. Revisa tu internet o escríbenos por WhatsApp.";
+
+const etiquetaCampo = "mb-1 block text-[0.8rem] font-semibold";
 
 function primerosErrores(campos: Partial<Record<string, string[] | undefined>>): Errores {
   const out: Errores = {};
@@ -42,7 +44,7 @@ export default function LeadForm({ id, perfil, cta, whatsapp }: Props) {
   return (
     <div className="bg-bone text-ink shadow-[0_30px_80px_-30px_rgb(0_0_0/0.7)]">
       <div className="h-1.5 bg-signal" aria-hidden />
-      <div className="p-5 sm:p-7">
+      <div className="p-4 min-[360px]:p-5 sm:p-7">
         {lead ? <Gracias id={id} perfil={perfil} whatsapp={whatsapp} /> : <Registro id={id} perfil={perfil} cta={cta} whatsapp={whatsapp} />}
       </div>
     </div>
@@ -140,8 +142,9 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
         {errores[c]}
       </p>
     ) : null;
-  const aria = (c: Campo) => ({
+  const attrs = (c: Campo) => ({
     id: `${id}-${c}`,
+    name: c,
     "aria-invalid": errores[c] ? ("true" as const) : undefined,
     "aria-describedby": errores[c] ? `${id}-${c}-error` : undefined,
   });
@@ -149,57 +152,72 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
   return (
     <form ref={form} onSubmit={enviar} noValidate aria-labelledby={`${id}-titulo`}>
       <p className="rotulo text-signal-strong">Registro para profesionales</p>
-      <h2 id={`${id}-titulo`} className="display mt-1.5 text-[1.75rem] text-ink sm:text-[2rem]">
+      <h2 id={`${id}-titulo`} className="display mt-1.5 text-[clamp(1.5rem,1.25rem+1vw,2rem)] text-ink">
         Stock, tendencias y fichas en tu correo
       </h2>
-      <p className="mt-1.5 text-sm text-ink/70">Un correo al mes y alertas cuando llega material. Te das de baja con un clic.</p>
+      <p className="mt-1.5 text-[0.85rem] leading-snug text-ink/70 max-[379px]:hidden sm:text-sm">
+        Un correo al mes y alertas cuando llega material. Te das de baja con un clic.
+      </p>
 
-      <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3">
-        <div className="col-span-2">
-          <label htmlFor={`${id}-nombre`} className="mb-1 block text-[0.8rem] font-semibold">
+      {/* Nombre/celular en una columna por debajo de 360 px; perfil y ciudad siempre en dos (selects cortos). */}
+      <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2.5 min-[360px]:mt-4 min-[360px]:gap-y-3">
+        <div className="col-span-2 min-[360px]:col-span-1">
+          <label htmlFor={`${id}-nombre`} className={etiquetaCampo}>
             Nombre
           </label>
-          <input {...aria("nombre")} className="campo" autoComplete="name" value={v.nombre} onChange={(e) => cambiar("nombre", e.target.value)} />
+          <input
+            {...attrs("nombre")}
+            className="campo"
+            type="text"
+            autoComplete="name"
+            autoCapitalize="words"
+            enterKeyHint="next"
+            value={v.nombre}
+            onChange={(e) => cambiar("nombre", e.target.value)}
+          />
           {err("nombre")}
         </div>
-        <div className="col-span-2 sm:col-span-1">
-          <label htmlFor={`${id}-email`} className="mb-1 block text-[0.8rem] font-semibold">
-            Correo
-          </label>
-          <input
-            {...aria("email")}
-            className="campo"
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            autoCapitalize="none"
-            spellCheck={false}
-            value={v.email}
-            onChange={(e) => cambiar("email", e.target.value)}
-          />
-          {err("email")}
-        </div>
-        <div className="col-span-2 sm:col-span-1">
-          <label htmlFor={`${id}-celular`} className="mb-1 block text-[0.8rem] font-semibold">
+        <div className="col-span-2 min-[360px]:col-span-1">
+          <label htmlFor={`${id}-celular`} className={etiquetaCampo}>
             Celular
           </label>
           <input
-            {...aria("celular")}
+            {...attrs("celular")}
             className="campo"
             type="tel"
             inputMode="tel"
             autoComplete="tel-national"
+            enterKeyHint="next"
             placeholder="312 345 6789"
             value={v.celular}
             onChange={(e) => cambiar("celular", e.target.value)}
           />
           {err("celular")}
         </div>
+        <div className="col-span-2">
+          <label htmlFor={`${id}-email`} className={etiquetaCampo}>
+            Correo
+          </label>
+          <input
+            {...attrs("email")}
+            className="campo"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            enterKeyHint="next"
+            spellCheck={false}
+            value={v.email}
+            onChange={(e) => cambiar("email", e.target.value)}
+          />
+          {err("email")}
+        </div>
         <div>
-          <label htmlFor={`${id}-perfil`} className="mb-1 block text-[0.8rem] font-semibold">
+          <label htmlFor={`${id}-perfil`} className={etiquetaCampo}>
             Perfil
           </label>
-          <select {...aria("perfil")} className="campo" value={v.perfil} onChange={(e) => cambiar("perfil", e.target.value)}>
+          <select {...attrs("perfil")} className="campo" autoComplete="organization-title" value={v.perfil} onChange={(e) => cambiar("perfil", e.target.value)}>
             <option value="" disabled>
               Elige…
             </option>
@@ -212,10 +230,10 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
           {err("perfil")}
         </div>
         <div>
-          <label htmlFor={`${id}-ciudad`} className="mb-1 block text-[0.8rem] font-semibold">
+          <label htmlFor={`${id}-ciudad`} className={etiquetaCampo}>
             Ciudad
           </label>
-          <select {...aria("ciudad")} className="campo" value={v.ciudad} onChange={(e) => cambiar("ciudad", e.target.value)}>
+          <select {...attrs("ciudad")} className="campo" autoComplete="address-level2" value={v.ciudad} onChange={(e) => cambiar("ciudad", e.target.value)}>
             <option value="" disabled>
               Elige…
             </option>
@@ -235,19 +253,19 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
         <input ref={honeypot} id={`${id}-sitio_web`} name="sitio_web" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <div className="mt-4">
-        <label className="flex cursor-pointer items-start gap-2.5 text-[0.8rem] leading-snug text-ink/80">
+      <div className="mt-3">
+        <label className="flex min-h-11 cursor-pointer items-start gap-3 py-1.5 text-[0.8rem] leading-snug text-ink/80">
           <input
-            {...aria("autorizacion")}
+            {...attrs("autorizacion")}
             type="checkbox"
-            className="mt-0.5 size-5 shrink-0 accent-ink"
+            className="mt-px size-6 shrink-0 accent-ink"
             checked={v.autorizacion}
             onChange={(e) => cambiar("autorizacion", e.target.checked)}
           />
           <span>
-            Autorizo a Decortiles Cerámica S.A.S. a tratar mis datos para enviarme información comercial, según la{" "}
+            Autorizo el tratamiento de mis datos para recibir información comercial, según la{" "}
             <Link href="/politica-de-datos" target="_blank" className="font-semibold underline underline-offset-2">
-              política de tratamiento de datos
+              política de datos
             </Link>{" "}
             (Ley 1581 de 2012).
           </span>
@@ -258,7 +276,7 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
       <button
         type="submit"
         disabled={enviando}
-        className="group mt-5 flex min-h-14 w-full items-center justify-between gap-3 bg-signal-strong px-5 text-left text-base font-bold text-white transition-colors hover:bg-ink disabled:opacity-70"
+        className="group mt-4 flex min-h-14 w-full items-center justify-between gap-3 bg-signal-strong px-5 text-left text-base font-bold text-white transition-colors hover:bg-ink disabled:opacity-70"
       >
         <span>{enviando ? "Enviando…" : cta}</span>
         <span aria-hidden className="text-xl transition-transform group-hover:translate-x-1">
@@ -266,13 +284,18 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
         </span>
       </button>
 
-      <p role="alert" aria-live="assertive" className="min-h-0 text-sm font-semibold text-error empty:hidden mt-3">
+      <p role="alert" aria-live="assertive" className="mt-3 text-sm font-semibold text-error empty:hidden">
         {errorGeneral}
       </p>
 
-      <p className="mt-3 text-center text-[0.8rem] text-ink/70">
-        ¿Prefieres hablar ya?{" "}
-        <WhatsAppLink mensaje={whatsapp} perfil={perfil} origen={`${id}-form`} className="font-semibold text-ink underline underline-offset-2">
+      <p className="mt-2 flex flex-wrap items-center justify-center gap-x-1 text-center text-[0.8rem] text-ink/70">
+        ¿Prefieres hablar ya?
+        <WhatsAppLink
+          mensaje={whatsapp}
+          perfil={perfil}
+          origen={`${id}-form`}
+          className="inline-flex min-h-11 items-center px-1 font-semibold text-ink underline underline-offset-2"
+        >
           Escríbenos por WhatsApp
         </WhatsAppLink>
       </p>
@@ -283,7 +306,6 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
 function Gracias({ id, perfil, whatsapp }: Omit<Props, "cta">) {
   const { lead, perfilCompleto } = useLead();
   const titulo = useRef<HTMLHeadingElement>(null);
-
   const esOrigen = lead?.origen === id;
 
   useEffect(() => {
@@ -295,18 +317,18 @@ function Gracias({ id, perfil, whatsapp }: Omit<Props, "cta">) {
   return (
     <div role="status" aria-live="polite">
       <p className="rotulo text-signal-strong">Registro confirmado</p>
-      <h2 ref={titulo} tabIndex={-1} className="display mt-1.5 text-[2rem] text-ink outline-none sm:text-[2.4rem]">
+      <h2 ref={titulo} tabIndex={-1} className="display mt-1.5 text-[clamp(1.9rem,1.5rem+1.6vw,2.4rem)] text-ink outline-none">
         Listo, {lead.nombre}.
       </h2>
       <p className="mt-2 text-[0.95rem] leading-relaxed text-ink/80">
-        Revisa tu correo <strong className="text-ink">{lead.email}</strong> (y la carpeta de promociones). Si necesitas cotizar
-        hoy, no esperes el correo:
+        Revisa tu correo <strong className="text-ink [overflow-wrap:anywhere]">{lead.email}</strong> (y la carpeta de promociones).
+        Si necesitas cotizar hoy, no esperes el correo:
       </p>
       <WhatsAppLink
         mensaje={whatsapp}
         perfil={perfil}
         origen={`${id}-gracias`}
-        className="mt-4 flex min-h-14 w-full items-center justify-center gap-2.5 bg-ink px-5 text-base font-bold text-bone transition-colors hover:bg-signal-strong"
+        className="mt-4 flex min-h-14 w-full items-center justify-center gap-2.5 bg-ink px-5 text-center text-base font-bold text-bone transition-colors hover:bg-signal-strong"
       >
         <IconoChat />
         Cotizar ya por WhatsApp
@@ -324,7 +346,15 @@ function PerfilListo() {
   );
 }
 
-function Chip({ type, name, value, checked, onChange, children }: {
+/** Opción táctil (≥44 px) para radio y checkbox, con marca visible al seleccionar. */
+function Chip({
+  type,
+  name,
+  value,
+  checked,
+  onChange,
+  children,
+}: {
   type: "radio" | "checkbox";
   name: string;
   value: string;
@@ -333,8 +363,16 @@ function Chip({ type, name, value, checked, onChange, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <label className="cursor-pointer border-[1.5px] border-ink/25 bg-white px-3 py-2 text-[0.85rem] font-medium transition-colors has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-bone has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal">
+    <label className="flex min-h-11 cursor-pointer items-center gap-2 border-[1.5px] border-ink/25 bg-white px-3 py-2 text-[0.9rem] leading-tight font-medium transition-colors select-none has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-bone has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-signal">
       <input type={type} name={name} value={value} checked={checked} onChange={onChange} className="sr-only" />
+      <span
+        aria-hidden
+        className={`flex size-4 shrink-0 items-center justify-center border-[1.5px] text-[0.65rem] ${type === "radio" ? "rounded-full" : ""} ${
+          checked ? "border-bone bg-bone text-ink" : "border-ink/40"
+        }`}
+      >
+        {checked ? "✓" : ""}
+      </span>
       {children}
     </label>
   );
@@ -395,14 +433,23 @@ function Perfilamiento({ id }: { id: string }) {
         Afina lo que te enviamos <span className="font-normal text-ink/70">· opcional, 20 segundos</span>
       </h3>
 
-      <label htmlFor={`${id}-empresa`} className="mt-4 mb-1 block text-[0.8rem] font-semibold">
+      <label htmlFor={`${id}-empresa`} className={`mt-4 ${etiquetaCampo}`}>
         Empresa
       </label>
-      <input id={`${id}-empresa`} className="campo" autoComplete="organization" value={empresa} onChange={(e) => setEmpresa(e.target.value)} />
+      <input
+        id={`${id}-empresa`}
+        name="empresa"
+        className="campo"
+        type="text"
+        autoComplete="organization"
+        enterKeyHint="done"
+        value={empresa}
+        onChange={(e) => setEmpresa(e.target.value)}
+      />
 
       <fieldset className="mt-4">
         <legend className="mb-1.5 text-[0.8rem] font-semibold">Etapa del proyecto</legend>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {OPCIONES.etapa.map((o) => (
             <Chip key={o.value} type="radio" name={`${id}-etapa`} value={o.value} checked={etapa === o.value} onChange={() => setEtapa(o.value)}>
               {o.label}
@@ -411,10 +458,10 @@ function Perfilamiento({ id }: { id: string }) {
         </div>
       </fieldset>
 
-      <label htmlFor={`${id}-m2`} className="mt-4 mb-1 block text-[0.8rem] font-semibold">
+      <label htmlFor={`${id}-m2`} className={`mt-4 ${etiquetaCampo}`}>
         m² estimados
       </label>
-      <select id={`${id}-m2`} className="campo" value={m2} onChange={(e) => setM2(e.target.value)}>
+      <select id={`${id}-m2`} name="m2" className="campo" autoComplete="off" value={m2} onChange={(e) => setM2(e.target.value)}>
         <option value="">Sin definir</option>
         {OPCIONES.m2.map((o) => (
           <option key={o.value} value={o.value}>
@@ -424,8 +471,8 @@ function Perfilamiento({ id }: { id: string }) {
       </select>
 
       <fieldset className="mt-4">
-        <legend className="mb-1.5 text-[0.8rem] font-semibold">Qué te interesa</legend>
-        <div className="flex flex-wrap gap-2">
+        <legend className="mb-1.5 text-[0.8rem] font-semibold">Qué te interesa · puedes marcar varias</legend>
+        <div className="grid grid-cols-1 gap-2 min-[360px]:grid-cols-2">
           {OPCIONES.intereses.map((o) => (
             <Chip key={o.value} type="checkbox" name={`${id}-intereses`} value={o.value} checked={intereses.includes(o.value)} onChange={() => toggle(o.value)}>
               {o.label}

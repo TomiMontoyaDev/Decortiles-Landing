@@ -6,8 +6,8 @@ export const OPCIONES = {
   perfil: [
     { value: "constructora", label: "Constructora" },
     { value: "arquitecto", label: "Arquitecto/a" },
-    { value: "disenador", label: "Diseñador/a de interiores" },
-    { value: "contratista", label: "Contratista / instalador" },
+    { value: "disenador", label: "Diseñador/a" },
+    { value: "contratista", label: "Contratista" },
   ],
   ciudad: [
     { value: "medellin", label: "Medellín" },

@@ -15,8 +15,8 @@ const VIGENCIA = "[fecha pendiente]";
 
 export default function PoliticaDatos() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12 sm:px-8 sm:py-20">
-      <Link href="/" className="rotulo text-steel hover:text-bone">
+    <main className="contenedor max-w-3xl pt-[max(3rem,env(safe-area-inset-top))] pb-[max(3rem,env(safe-area-inset-bottom))] sm:py-20">
+      <Link href="/" className="rotulo -ml-1 inline-flex min-h-11 items-center px-1 text-steel hover:text-bone">
         ← Volver
       </Link>
       {process.env.NODE_ENV !== "production" && (
@@ -24,15 +24,15 @@ export default function PoliticaDatos() {
           Borrador: texto base pendiente de revisión legal. Este aviso solo se ve en desarrollo.
         </p>
       )}
-      <h1 className="display mt-6 text-4xl text-bone sm:text-6xl">Política de tratamiento de datos personales</h1>
+      <h1 className="display t-h2 mt-6 text-bone">Política de tratamiento de datos personales</h1>
 
-      <div className="mt-10 space-y-8 text-[0.98rem] leading-relaxed text-bone/85 [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-bone [&_li]:ml-5 [&_li]:list-disc [&_ul]:space-y-1.5">
+      <div className="mt-10 space-y-8 text-[0.98rem] leading-relaxed text-bone/85 [overflow-wrap:anywhere] [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-bone [&_li]:ml-5 [&_li]:list-disc [&_ul]:space-y-1.5">
         <section>
           <h2>1. Responsable del tratamiento</h2>
           <p>
             {NEGOCIO.razonSocial}, NIT {NIT}, con domicilio en Cl. 50 #56B-22, La Candelaria, Medellín (Antioquia), y sede
             en Cra. 35 #29B-42, Barranquilla (Atlántico). Correo: {NEGOCIO.correo}. Teléfono / WhatsApp:{" "}
-            {NEGOCIO.whatsapp[0].visible}.
+            {NEGOCIO.whatsapp.visible}.
           </p>
         </section>
 

@@ -31,6 +31,8 @@ export const viewport: Viewport = {
   themeColor: "#0a1424",
   width: "device-width",
   initialScale: 1,
+  // Habilita env(safe-area-inset-*) en iPhone (notch y barra inferior).
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

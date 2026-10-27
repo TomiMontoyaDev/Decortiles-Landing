@@ -8,10 +8,10 @@ export const metadata: Metadata = { title: "Correo confirmado · DECORTILES" };
 
 export default function Confirmado() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col justify-center px-4 py-16 sm:px-8">
+    <main className="contenedor flex min-h-dvh max-w-2xl flex-col justify-center pt-[max(4rem,env(safe-area-inset-top))] pb-[max(4rem,env(safe-area-inset-bottom))]">
       <Image src="/images/marca.png" alt="" width={56} height={56} />
       <p className="rotulo mt-8 text-signal-soft">Suscripción activa</p>
-      <h1 className="display mt-3 text-5xl text-bone sm:text-7xl">Correo confirmado.</h1>
+      <h1 className="display t-h1 mt-3 text-bone">Correo confirmado.</h1>
       <p className="mt-5 text-lg leading-relaxed text-bone/80">
         Desde ahora te llegan las alertas de stock, las llegadas de contenedor y lo que se está especificando cada mes.
         Si tienes una obra andando, no esperes el próximo correo.
