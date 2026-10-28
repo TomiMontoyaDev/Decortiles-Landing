@@ -325,7 +325,7 @@ Hay que repetir la medición con los IDs reales de Pixel y GA y en el dominio fi
 
 El código de servidor sigue en el repo por si algún día se necesita (por ejemplo, para la Meta Conversions API): `app/api/lead/route.api.ts` envía a Brevo y avisa a ventas, pero no guarda en Supabase (el dashboard quedaría vacío), y `middleware.api.ts` sirve `?perfil=` sin redirigir.
 
-- Se activa con `npm run build && npm start` en Vercel (proyecto Next.js, plan Pro para uso comercial) o en un **Render Web Service**, con las variables de servidor de la sección 2.
+- Se activa con `npm run build:server && npm start` (ojo: `npm run build` genera el sitio estático) en Vercel (proyecto Next.js, plan Pro para uso comercial) o en un **Render Web Service**, con las variables de servidor de la sección 2.
 - El plan gratis de Render Web Service se duerme tras 15 minutos sin tráfico y la primera visita tarda 30–50 s. Por eso la landing se publica estática.
 
 ## 13. TODO que dependen del cliente
