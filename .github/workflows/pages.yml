@@ -1,8 +1,9 @@
 # Publica la versión estática de la landing en GitHub Pages.
 # Requisito (una sola vez): Settings → Pages → Build and deployment → Source: "GitHub Actions".
 # Si queda en "Deploy from a branch", Pages publica la raíz del repo (sin index.html) y da 404.
-# Formulario y dashboard usan Supabase: definir las variables de repositorio SUPABASE_URL y
-# SUPABASE_PUBLISHABLE_KEY (Settings → Secrets and variables → Actions → Variables). README, sección 4.
+# Publicada en https://tomimontoyadev.github.io/Decortiles-Landing/ (dashboard: /admin/).
+# Supabase ya tiene valores por defecto abajo (son públicos). Para cambiarlos sin tocar este archivo, crear
+# las variables SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY o LEAD_ENDPOINT (Settings → Secrets and variables → Actions → Variables).
 name: GitHub Pages
 
 on:
@@ -41,11 +42,10 @@ jobs:
           # /Decortiles-Landing en <usuario>.github.io; vacío si se configura dominio propio.
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
-          NEXT_PUBLIC_LEAD_ENDPOINT: ${{ vars.LEAD_ENDPOINT }}
-          NEXT_PUBLIC_WHATSAPP: ${{ vars.WHATSAPP }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL || 'https://ufhkwmszrzdbprodzxaf.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_oNlHCnkGcaNayKxxeF0s7g_3XCTyP0D' }}
+          NEXT_PUBLIC_LEAD_ENDPOINT: ${{ vars.LEAD_ENDPOINT || 'https://ufhkwmszrzdbprodzxaf.supabase.co/functions/v1/swift-task' }}
+          NEXT_PUBLIC_WHATSAPP: ${{ vars.WHATSAPP || '573128019754' }}
           NEXT_PUBLIC_META_PIXEL_ID: ${{ vars.META_PIXEL_ID }}
           NEXT_PUBLIC_GA_ID: ${{ vars.GA_ID }}
           NEXT_PUBLIC_GADS_CONVERSION: ${{ vars.GADS_CONVERSION }}
