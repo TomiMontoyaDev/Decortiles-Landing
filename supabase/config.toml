@@ -1,0 +1,5 @@
+# Solo lo que usa `npx supabase functions deploy lead`.
+# El formulario es público: la función no exige el JWT de Supabase (equivale a
+# desactivar "Enforce JWT verification" si se crea desde el panel).
+[functions.lead]
+verify_jwt = false

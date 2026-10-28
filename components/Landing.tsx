@@ -64,16 +64,30 @@ function Hero({ perfil }: { perfil: PerfilCopy }) {
 
       <header className="contenedor flex items-center justify-between gap-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:pt-6">
         <Marca />
-        <WhatsAppLink
-          mensaje={perfil.whatsapp}
-          perfil={perfil.id}
-          origen="header"
-          className="-mr-2 flex min-h-11 min-w-11 items-center justify-center gap-2 px-2 text-sm font-semibold text-bone/85 transition-colors hover:text-white"
-        >
-          <IconoChat />
-          <span className="hidden sm:inline">{NEGOCIO.whatsapp.visible}</span>
-          <span className="sm:hidden">WhatsApp</span>
-        </WhatsAppLink>
+        <div className="-mr-2 flex items-center gap-1">
+          <WhatsAppLink
+            mensaje={perfil.whatsapp}
+            perfil={perfil.id}
+            origen="header"
+            className="flex min-h-11 min-w-11 items-center justify-center gap-2 px-2 text-sm font-semibold text-bone/85 transition-colors hover:text-white"
+          >
+            <IconoChat />
+            <span className="hidden sm:inline">{NEGOCIO.whatsapp.visible}</span>
+            <span className="sm:hidden">WhatsApp</span>
+          </WhatsAppLink>
+          {/* Acceso discreto del equipo al dashboard de leads (/admin/). */}
+          <Link
+            href="/admin/"
+            aria-label="Acceso del equipo"
+            title="Acceso del equipo"
+            className="flex size-11 items-center justify-center text-bone/50 transition-colors hover:text-white"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden className="size-5">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21a8 8 0 0 1 16 0" strokeLinecap="round" />
+            </svg>
+          </Link>
+        </div>
       </header>
 
       <div

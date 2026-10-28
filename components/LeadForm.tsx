@@ -31,6 +31,9 @@ type Errores = Partial<Record<Campo, string>>;
 
 const ORDEN: Campo[] = ["nombre", "celular", "email", "perfil", "ciudad", "autorizacion"];
 const ERROR_RED = "No hay conexión. Revisa tu internet o escríbenos por WhatsApp.";
+// JSON enviado como text/plain: así el navegador no hace preflight CORS hacia la Edge
+// Function de Supabase (otro dominio) y el envío es más rápido. /api/lead lo lee igual.
+const TEXTO_PLANO = { "content-type": "text/plain;charset=utf-8" };
 
 const etiquetaCampo = "mb-1 block text-[0.8rem] font-semibold";
 
@@ -111,7 +114,7 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
     try {
       const res = await fetch(LEAD_ENDPOINT, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: TEXTO_PLANO,
         body: JSON.stringify({
           ...r.data,
           paso: 1,
@@ -119,6 +122,7 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
           ms: Math.max(0, Date.now() - inicio.current),
           tracking: capturarTracking(),
           eventId,
+          pagina: location.href,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; token?: string; error?: string; campos?: Record<string, string[]> };
@@ -410,7 +414,7 @@ function Perfilamiento({ id }: { id: string }) {
     try {
       const res = await fetch(LEAD_ENDPOINT, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: TEXTO_PLANO,
         body: JSON.stringify(r.data),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
