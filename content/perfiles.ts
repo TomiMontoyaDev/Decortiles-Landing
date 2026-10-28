@@ -54,7 +54,7 @@ export const PERFILES: Record<PerfilId, PerfilCopy> = {
     id: "general",
     etiqueta: "Para profesionales de obra y diseño",
     h1: ["Acabados con stock.", "No con promesas."],
-    subtitulo: `Importamos directo más de 90 referencias de porcelanato, cerámica y sanitarios. Bodega en Medellín y Barranquilla. 13 años despachando a obra.`,
+    subtitulo: "Más de 90 referencias de importación directa, con stock en Medellín y Barranquilla.",
     cta: "Recibir stock y tendencias",
     beneficios: [B.stock, B.tendencias, B.fichas, B.volumen],
     cierre: "Deja de cotizar material que no existe.",
@@ -65,8 +65,7 @@ export const PERFILES: Record<PerfilId, PerfilCopy> = {
     etiqueta: "Para constructoras",
     h1: ["Tu obra no espera barcos.", "El material ya llegó."],
     // TODO cliente: confirmar la promesa de "un solo lote para toda la torre".
-    subtitulo:
-      "Porcelanato 60×120, pisos de alto tránsito y sanitarios con inventario local. Un solo lote para toda la torre.",
+    subtitulo: "Porcelanato 60×120 con inventario local. Un solo lote para toda la torre.",
     cta: "Ver inventario disponible",
     beneficios: [B.stock, B.volumen, B.fichas, B.tendencias],
     cierre: "Cotiza contra inventario real, no contra un contenedor en altamar.",
@@ -77,8 +76,7 @@ export const PERFILES: Record<PerfilId, PerfilCopy> = {
     id: "arquitecto",
     etiqueta: "Para arquitectos",
     h1: ["Tú especificas.", "Nosotros ya lo tenemos en bodega."],
-    subtitulo:
-      "Fichas técnicas, formatos reales y stock confirmado antes de que la referencia llegue al plano.",
+    subtitulo: "Fichas técnicas y stock confirmado antes de que la referencia llegue al plano.",
     cta: "Recibir fichas técnicas",
     beneficios: [B.fichas, B.tendencias, B.stock, B.volumen],
     cierre: "Especifica algo que sí se pueda comprar el día de la obra.",
@@ -89,8 +87,7 @@ export const PERFILES: Record<PerfilId, PerfilCopy> = {
     id: "disenador",
     etiqueta: "Para diseñadores de interiores",
     h1: ["La referencia que eliges", "es la que llega."],
-    subtitulo:
-      "Mosaicos, mallas, maderas cerámicas y gran formato con muestra física en showroom. Cada mes, lo que se está especificando.",
+    subtitulo: "Mosaicos, maderas cerámicas y gran formato con muestra física en showroom.",
     cta: "Ver lo que se está usando",
     beneficios: [B.tendencias, B.stock, B.fichas, B.volumen],
     cierre: "Que el render y la obra terminada se vean igual.",
@@ -102,8 +99,7 @@ export const PERFILES: Record<PerfilId, PerfilCopy> = {
     etiqueta: "Para contratistas e instaladores",
     h1: ["Pides. Separas. Instalas.", "Sin vueltas."],
     // TODO cliente: confirmar precios por volumen y condiciones de despacho.
-    subtitulo:
-      "Precios por volumen, cajas con m² claros y despacho desde Medellín o Barranquilla. Te avisamos cuando llega lo que necesitas.",
+    subtitulo: "Precio por volumen y despacho desde Medellín o Barranquilla.",
     cta: "Recibir precios por volumen",
     beneficios: [B.volumen, B.stock, B.fichas, B.tendencias],
     cierre: "Material listo cuando la cuadrilla está lista.",

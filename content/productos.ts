@@ -112,6 +112,17 @@ export const PRODUCTOS: Producto[] = [
   },
 ];
 
+/** Productos que se muestran en la landing (versión corta). Editar esta lista para cambiarlos. */
+export const DESTACADOS = ["black-gold", "venzo-natural-hg", "fachada-chennai", "piedra-gris"];
+
+/** Fotos que se muestran en la galería (versión corta). */
+export const AMBIENTES_LANDING = [
+  "/images/ambientes/showroom.jpg",
+  "/images/ambientes/ceramica_pared.jpg",
+  "/images/ambientes/ceramica_madera.jpg",
+  "/images/ambientes/interior4.jpg",
+];
+
 // Fotos de ambientes para "Proyectos instalados". Los pies de foto describen
 // lo que se ve; no nombran proyectos ni clientes.
 export const AMBIENTES = [

@@ -53,7 +53,8 @@ Cada anuncio apunta a la misma URL con un `perfil` distinto:
 | Contratista | `…/?perfil=contratista&…` |
 
 - El copy de cada perfil (H1, subtítulo, beneficios, CTA, cierre y mensaje de WhatsApp) está en **`content/perfiles.ts`**. Se edita sin tocar componentes.
-- Los productos y sus datos técnicos están en `content/productos.ts`. Los datos del negocio (sedes, WhatsApp, horario) están en `content/negocio.ts`.
+- Los productos y sus datos técnicos están en `content/productos.ts`. La landing muestra solo los 4 de `DESTACADOS` y las 4 fotos de `AMBIENTES_LANDING`; para cambiarlos se edita esa lista. Los datos del negocio (sedes, WhatsApp, horario) están en `content/negocio.ts`.
+- **Versión corta** (pedida por gerencia, 28/10/2026): hero con formulario, barra de prueba, 3 frases de por qué, 4 productos, 4 fotos y cierre. Los textos de "beneficios" por perfil siguen en `perfiles.ts` aunque ya no se muestran.
 - `middleware.ts` reescribe `/?perfil=x` a la versión estática `/p/x`, generada en el build. La URL del navegador no cambia.
 - Se capturan `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid` y `fbclid`. Se guardan en `sessionStorage` y viajan con el lead.
 
@@ -216,8 +217,8 @@ Mobile-first, verificado en 320, 360, 375, 390, 414, 768, 1024, 1280, 1440 y 192
   - Teclados correctos: `type="email"`, `type="tel"` e `inputmode`.
   - `autocomplete` y `name` en cada campo.
   - Los intereses son chips de 44 px en grilla, para tocar con el dedo.
-- **Productos:** 1 columna en móvil (tarjeta horizontal), 2 en tablet, 3 en desktop y 4 desde 1280 px.
-- **Galería:** carrusel con scroll-snap en móvil, 2 columnas en tablet y mosaico de 4 en desktop.
+- **Productos:** 4 destacados; 1 columna en móvil (tarjeta horizontal), 2 en tablet y 4 en desktop.
+- **Galería:** 4 fotos; carrusel con scroll-snap en móvil, 2 columnas en tablet y 4 en desktop.
 - **WhatsApp flotante** (solo móvil): se oculta mientras hay un formulario o el footer en pantalla, así que nunca tapa el botón de enviar. Respeta `env(safe-area-inset-*)`, gracias a `viewport-fit=cover`. El contenedor también respeta el notch en horizontal.
 - `100dvh` en las secciones de alto completo (`/confirmado`). Hay `sizes` en cada `next/image`: en un móvil de 375 px a 2× los productos bajan a 384 px y la galería a 640 px.
 - Se respeta `prefers-reduced-motion`: se desactivan las animaciones, las transiciones y el scroll suave.
