@@ -24,6 +24,8 @@ type Valores = {
   celular: string;
   perfil: string;
   ciudad: string;
+  /** Lo que escribe el cliente si elige "Otra" ciudad. */
+  ciudadOtra: string;
   autorizacion: boolean;
 };
 type Campo = keyof Valores;
@@ -63,6 +65,7 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
     celular: "",
     perfil: perfil === "general" ? "" : perfil,
     ciudad: "",
+    ciudadOtra: "",
     autorizacion: false,
   });
   const [errores, setErrores] = useState<Errores>({});
@@ -78,7 +81,7 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
   }, []);
 
   function validar(valores: Valores) {
-    const r = leadCamposSchema.safeParse(valores);
+    const r = leadCamposSchema.safeParse({ ...valores, ciudad: valores.ciudad === "otra" ? valores.ciudadOtra : valores.ciudad });
     return r.success ? { ok: true as const, data: r.data } : { ok: false as const, errores: primerosErrores(r.error.flatten().fieldErrors) };
   }
 
@@ -93,7 +96,8 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
   }
 
   function enfocarPrimerError(e: Errores) {
-    const campo = ORDEN.find((c) => e[c]);
+    let campo = ORDEN.find((c) => e[c]);
+    if (campo === "ciudad" && v.ciudad === "otra") campo = "ciudadOtra";
     if (campo) form.current?.querySelector<HTMLElement>(`#${id}-${campo}`)?.focus();
   }
 
@@ -238,7 +242,14 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
           <label htmlFor={`${id}-ciudad`} className={etiquetaCampo}>
             Ciudad
           </label>
-          <select {...attrs("ciudad")} className="campo" autoComplete="address-level2" value={v.ciudad} onChange={(e) => cambiar("ciudad", e.target.value)}>
+          <select
+            {...attrs("ciudad")}
+            {...(v.ciudad === "otra" ? { "aria-invalid": undefined, "aria-describedby": undefined } : {})}
+            className="campo"
+            autoComplete="off"
+            value={v.ciudad}
+            onChange={(e) => cambiar("ciudad", e.target.value)}
+          >
             <option value="" disabled>
               Elige…
             </option>
@@ -248,8 +259,32 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
               </option>
             ))}
           </select>
-          {err("ciudad")}
+          {v.ciudad !== "otra" && err("ciudad")}
         </div>
+        {v.ciudad === "otra" && (
+          <div className="col-span-2">
+            <label htmlFor={`${id}-ciudadOtra`} className={etiquetaCampo}>
+              ¿Cuál ciudad o municipio?
+            </label>
+            <input
+              id={`${id}-ciudadOtra`}
+              name="ciudad"
+              className="campo"
+              type="text"
+              autoComplete="address-level2"
+              autoCapitalize="words"
+              enterKeyHint="next"
+              maxLength={60}
+              placeholder="Ej. Girardot"
+              aria-invalid={errores.ciudad ? "true" : undefined}
+              aria-describedby={errores.ciudad ? `${id}-ciudad-error` : undefined}
+              value={v.ciudadOtra}
+              onChange={(e) => cambiar("ciudadOtra", e.target.value)}
+              autoFocus
+            />
+            {err("ciudad")}
+          </div>
+        )}
       </div>
 
       {/* Honeypot: invisible para personas, tentador para bots. */}

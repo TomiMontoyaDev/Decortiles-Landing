@@ -145,7 +145,7 @@ Contacts → Settings → **Contact attributes**. Crea todos como tipo **Texto**
 | `NOMBRE` | En cuentas en español suele existir por defecto. Si ya existe, se usa ese. |
 | `CELULAR` | `+573001234567` |
 | `PERFIL` | `constructora` · `arquitecto` · `disenador` · `contratista` |
-| `CIUDAD` | `medellin` · `barranquilla` · `bogota` · `cali` · `otra` |
+| `CIUDAD` | Valor de la lista (`medellin`, `barranquilla`, `bogota`, `cali`, `cartagena`, `pereira`…; ver `OPCIONES.ciudad` en `lib/lead-schema.ts`) o, si eligió "Otra", el nombre que escribió (p. ej. `Girardot`). |
 | `EMPRESA` | texto libre (paso 2) |
 | `ETAPA` | `diseno` · `licitacion` · `obra-gris` · `acabados` |
 | `M2_RANGO` | `<200` · `200-1000` · `1000-5000` · `>5000` |

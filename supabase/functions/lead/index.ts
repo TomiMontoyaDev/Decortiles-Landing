@@ -19,7 +19,16 @@ const ERROR_GENERICO = "No pudimos registrar tus datos. Intenta de nuevo o escr�
 // Mismos valores que lib/lead-schema.ts (OPCIONES).
 const ETIQUETAS: Record<string, Record<string, string>> = {
   perfil: { constructora: "Constructora", arquitecto: "Arquitecto/a", disenador: "Diseñador/a", contratista: "Contratista" },
-  ciudad: { medellin: "Medellín", barranquilla: "Barranquilla", bogota: "Bogotá", cali: "Cali", otra: "Otra" },
+  // Si no está aquí, es una ciudad que escribió el cliente y se guarda tal cual.
+  ciudad: {
+    medellin: "Medellín", barranquilla: "Barranquilla", armenia: "Armenia", bello: "Bello", bogota: "Bogotá",
+    bucaramanga: "Bucaramanga", cali: "Cali", cartagena: "Cartagena", chia: "Chía", cucuta: "Cúcuta",
+    envigado: "Envigado", florencia: "Florencia", ibague: "Ibagué", itagui: "Itagüí", manizales: "Manizales",
+    monteria: "Montería", neiva: "Neiva", pasto: "Pasto", pereira: "Pereira", popayan: "Popayán",
+    "puerto-colombia": "Puerto Colombia", quibdo: "Quibdó", riohacha: "Riohacha", rionegro: "Rionegro",
+    sabaneta: "Sabaneta", "san-andres": "San Andrés", "santa-marta": "Santa Marta", sincelejo: "Sincelejo",
+    soledad: "Soledad", tunja: "Tunja", valledupar: "Valledupar", villavicencio: "Villavicencio", yopal: "Yopal",
+  },
   etapa: { diseno: "Diseño", licitacion: "Licitación", "obra-gris": "Obra gris", acabados: "Acabados" },
   m2: { "<200": "Menos de 200 m²", "200-1000": "200 – 1.000 m²", "1000-5000": "1.000 – 5.000 m²", ">5000": "Más de 5.000 m²" },
   intereses: {
@@ -96,14 +105,14 @@ async function registro(b: Body): Promise<Resultado> {
     email: texto(b.email, 120).toLowerCase(),
     celular: celular(b.celular),
     perfil: texto(b.perfil, 20),
-    ciudad: texto(b.ciudad, 20),
+    ciudad: ciudad(b.ciudad),
   };
   const campos: Record<string, string[]> = {};
   if (lead.nombre.length < 2) campos.nombre = ["Escribe tu nombre"];
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) campos.email = ["Revisa el correo"];
   if (!lead.celular) campos.celular = ["Escribe un celular de 10 dígitos (ej. 312 345 6789)"];
   if (!ETIQUETAS.perfil[lead.perfil]) campos.perfil = ["Elige tu perfil"];
-  if (!ETIQUETAS.ciudad[lead.ciudad]) campos.ciudad = ["Elige una ciudad"];
+  if (lead.ciudad.length < 2) campos.ciudad = ["Elige o escribe tu ciudad"];
   if (b.autorizacion !== true) campos.autorizacion = ["Necesitamos tu autorización para escribirte"];
   if (Object.keys(campos).length) return { ok: false, error: "Revisa los campos marcados.", campos };
 
@@ -128,13 +137,13 @@ async function registro(b: Body): Promise<Resultado> {
       const brevo = await registrarEnBrevo(lead, tracking).catch((e) => `error: ${String(e?.message ?? e).slice(0, 300)}`);
       await db.from("leads").update({ brevo }).eq("id", data.id);
       const wa = `https://wa.me/${lead.celular.replace(/\D/g, "")}`;
-      await notificar(`Lead ${ETIQUETAS.perfil[lead.perfil]} · ${ETIQUETAS.ciudad[lead.ciudad]} · ${lead.nombre}`, lead.email, [
+      await notificar(`Lead ${ETIQUETAS.perfil[lead.perfil]} · ${nombreCiudad(lead.ciudad)} · ${lead.nombre}`, lead.email, [
         ["Nombre", lead.nombre],
         ["Correo", lead.email],
         ["Celular", lead.celular],
         ["WhatsApp", wa],
         ["Perfil", ETIQUETAS.perfil[lead.perfil]],
-        ["Ciudad", ETIQUETAS.ciudad[lead.ciudad]],
+        ["Ciudad", nombreCiudad(lead.ciudad)],
         ...UTMS.filter((k) => !["gclid", "fbclid"].includes(k)).map((k): [string, string | null] => [k, tracking[k]]),
         ["gclid", tracking.gclid ? "sí" : null],
         ["fbclid", tracking.fbclid ? "sí" : null],
@@ -293,6 +302,18 @@ function celular(v: unknown) {
   const d = String(v ?? "").replace(/\D/g, "").replace(/^57(?=3\d{9}$)/, "");
   return /^3\d{9}$/.test(d) ? `+57${d}` : "";
 }
+
+const sinTildes = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+/** Valor de la lista ("medellin") o el nombre escrito por el cliente; "" si no es válido. */
+function ciudad(v: unknown) {
+  const t = limpio(v, 60);
+  if (!t || t === "otra") return "";
+  const conocida = Object.entries(ETIQUETAS.ciudad).find(([k, label]) => k === sinTildes(t) || sinTildes(label) === sinTildes(t));
+  return conocida?.[0] ?? t;
+}
+
+const nombreCiudad = (c: string) => ETIQUETAS.ciudad[c] ?? c;
 
 const esUuid = (s: string | undefined) => !!s && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 

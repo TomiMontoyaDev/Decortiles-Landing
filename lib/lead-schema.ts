@@ -9,12 +9,43 @@ export const OPCIONES = {
     { value: "disenador", label: "Diseñador/a" },
     { value: "contratista", label: "Contratista" },
   ],
+  // Primero las dos sedes; luego las principales ciudades en orden alfabético.
+  // "otra" abre un campo de texto y se guarda lo que escriba el cliente.
   ciudad: [
     { value: "medellin", label: "Medellín" },
     { value: "barranquilla", label: "Barranquilla" },
+    { value: "armenia", label: "Armenia" },
+    { value: "bello", label: "Bello" },
     { value: "bogota", label: "Bogotá" },
+    { value: "bucaramanga", label: "Bucaramanga" },
     { value: "cali", label: "Cali" },
-    { value: "otra", label: "Otra" },
+    { value: "cartagena", label: "Cartagena" },
+    { value: "chia", label: "Chía" },
+    { value: "cucuta", label: "Cúcuta" },
+    { value: "envigado", label: "Envigado" },
+    { value: "florencia", label: "Florencia" },
+    { value: "ibague", label: "Ibagué" },
+    { value: "itagui", label: "Itagüí" },
+    { value: "manizales", label: "Manizales" },
+    { value: "monteria", label: "Montería" },
+    { value: "neiva", label: "Neiva" },
+    { value: "pasto", label: "Pasto" },
+    { value: "pereira", label: "Pereira" },
+    { value: "popayan", label: "Popayán" },
+    { value: "puerto-colombia", label: "Puerto Colombia" },
+    { value: "quibdo", label: "Quibdó" },
+    { value: "riohacha", label: "Riohacha" },
+    { value: "rionegro", label: "Rionegro" },
+    { value: "sabaneta", label: "Sabaneta" },
+    { value: "san-andres", label: "San Andrés" },
+    { value: "santa-marta", label: "Santa Marta" },
+    { value: "sincelejo", label: "Sincelejo" },
+    { value: "soledad", label: "Soledad" },
+    { value: "tunja", label: "Tunja" },
+    { value: "valledupar", label: "Valledupar" },
+    { value: "villavicencio", label: "Villavicencio" },
+    { value: "yopal", label: "Yopal" },
+    { value: "otra", label: "Otra (escríbela)" },
   ],
   etapa: [
     { value: "diseno", label: "Diseño" },
@@ -51,6 +82,25 @@ const limpio = (max: number) =>
     .transform((s) => s.replace(/[\u0000-\u001f\u007f<>{}]/g, "").replace(/\s+/g, " ").trim())
     .pipe(z.string().max(max));
 
+const sinTildes = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+
+/**
+ * Ciudad: el valor de la lista (p. ej. "medellin") o el nombre que escribió el cliente en "Otra".
+ * Si lo escrito coincide con una ciudad de la lista ("medellin", "Medellín"), se guarda su valor.
+ */
+export function normalizarCiudad(s: string) {
+  const t = s.replace(/[\u0000-\u001f\u007f<>{}]/g, "").replace(/\s+/g, " ").trim().slice(0, 60);
+  const conocida = OPCIONES.ciudad.find((o) => o.value !== "otra" && (o.value === sinTildes(t) || sinTildes(o.label) === sinTildes(t)));
+  return conocida?.value ?? t;
+}
+
+export const esCiudadDeLista = (v: string) => OPCIONES.ciudad.some((o) => o.value === v && o.value !== "otra");
+
 /** Celular colombiano: 10 dígitos que empiezan por 3, con o sin +57. Devuelve "+573XXXXXXXXX". */
 export const celularSchema = z
   .string()
@@ -78,7 +128,10 @@ export const leadCamposSchema = z.object({
   email: z.string().trim().toLowerCase().email("Revisa el correo").max(120),
   celular: celularSchema,
   perfil: z.enum(PERFILES_PAUTA, { errorMap: () => ({ message: "Elige tu perfil" }) }),
-  ciudad: z.enum(valores(OPCIONES.ciudad), { errorMap: () => ({ message: "Elige una ciudad" }) }),
+  ciudad: z
+    .string()
+    .transform(normalizarCiudad)
+    .refine((c) => c.length >= 2 && c !== "otra", "Elige o escribe tu ciudad"),
   autorizacion: z.literal(true, { errorMap: () => ({ message: "Necesitamos tu autorización para escribirte" }) }),
 });
 

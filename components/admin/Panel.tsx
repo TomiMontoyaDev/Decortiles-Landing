@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { asset } from "@/lib/config";
-import { OPCIONES, etiqueta, leadCamposSchema } from "@/lib/lead-schema";
+import { OPCIONES, esCiudadDeLista, etiqueta, leadCamposSchema } from "@/lib/lead-schema";
 import { COLUMNAS_LEAD, ESTADOS, supabase, type Lead } from "@/lib/supabase";
 
 const POR_PAGINA = 50;
@@ -127,6 +127,9 @@ function Login() {
   );
 }
 
+// En el filtro, "otra" agrupa todas las ciudades escritas a mano.
+const CIUDADES_FILTRO = OPCIONES.ciudad.map((o) => (o.value === "otra" ? { value: "otra", label: "Otras ciudades" } : o));
+
 type Filtros = { q: string; perfil: string; ciudad: string; estado: string; dias: string };
 const SIN_FILTROS: Filtros = { q: "", perfil: "", ciudad: "", estado: "", dias: "" };
 
@@ -162,7 +165,7 @@ function Dashboard() {
     return leads.filter(
       (l) =>
         (!f.perfil || l.perfil === f.perfil) &&
-        (!f.ciudad || l.ciudad === f.ciudad) &&
+        (!f.ciudad || (f.ciudad === "otra" ? !esCiudadDeLista(l.ciudad) : l.ciudad === f.ciudad)) &&
         (!f.estado || l.estado === f.estado) &&
         (!desde || new Date(l.creado).getTime() >= desde) &&
         (!q || [l.nombre, l.email, l.celular, l.empresa, l.utm_campaign].some((v) => v?.toLowerCase().includes(q))),
@@ -259,7 +262,7 @@ function Dashboard() {
           <input id="f-q" className="campo" type="search" placeholder="Nombre, correo, celular, empresa…" value={f.q} onChange={(e) => filtro("q", e.target.value)} />
         </div>
         <Selector id="f-perfil" label="Perfil" value={f.perfil} onChange={(v) => filtro("perfil", v)} opciones={OPCIONES.perfil} />
-        <Selector id="f-ciudad" label="Ciudad" value={f.ciudad} onChange={(v) => filtro("ciudad", v)} opciones={OPCIONES.ciudad} />
+        <Selector id="f-ciudad" label="Ciudad" value={f.ciudad} onChange={(v) => filtro("ciudad", v)} opciones={CIUDADES_FILTRO} />
         <Selector id="f-estado" label="Estado" value={f.estado} onChange={(v) => filtro("estado", v)} opciones={ESTADOS} />
         <Selector
           id="f-dias"
@@ -478,7 +481,8 @@ function Editor({ lead: l, guardar, cerrar }: { lead: Lead; guardar: (cambios: P
     email: l.email,
     celular: l.celular.replace(/^\+57/, ""),
     perfil: l.perfil,
-    ciudad: l.ciudad,
+    ciudad: esCiudadDeLista(l.ciudad) ? l.ciudad : "otra",
+    ciudadOtra: esCiudadDeLista(l.ciudad) ? "" : l.ciudad,
     empresa: l.empresa ?? "",
     etapa: l.etapa ?? "",
     m2: l.m2 ?? "",
@@ -493,7 +497,7 @@ function Editor({ lead: l, guardar, cerrar }: { lead: Lead; guardar: (cambios: P
   async function enviar(ev: React.FormEvent) {
     ev.preventDefault();
     setError("");
-    const r = edicionSchema.safeParse(v);
+    const r = edicionSchema.safeParse({ ...v, ciudad: v.ciudad === "otra" ? v.ciudadOtra : v.ciudad });
     if (!r.success) {
       const e = r.error.flatten().fieldErrors;
       return setErrores(Object.fromEntries(Object.entries(e).map(([k, m]) => [k, m?.[0]])));
@@ -512,7 +516,7 @@ function Editor({ lead: l, guardar, cerrar }: { lead: Lead; guardar: (cambios: P
     else cerrar();
   }
 
-  const campo = (c: "nombre" | "email" | "celular" | "empresa", label: string, type = "text") => (
+  const campo = (c: "nombre" | "email" | "celular" | "empresa" | "ciudadOtra", label: string, type = "text") => (
     <div>
       <label htmlFor={id(c)} className="rotulo mb-1 block text-steel">
         {label}
@@ -546,6 +550,7 @@ function Editor({ lead: l, guardar, cerrar }: { lead: Lead; guardar: (cambios: P
         {campo("celular", "Celular", "tel")}
         {lista("perfil", "Perfil", OPCIONES.perfil)}
         {lista("ciudad", "Ciudad", OPCIONES.ciudad)}
+        {v.ciudad === "otra" && campo("ciudadOtra", "¿Cuál ciudad?")}
         {campo("empresa", "Empresa")}
         {lista("etapa", "Etapa", OPCIONES.etapa, "Sin definir")}
         {lista("m2", "m² estimados", OPCIONES.m2, "Sin definir")}
