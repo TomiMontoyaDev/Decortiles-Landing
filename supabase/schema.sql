@@ -4,7 +4,7 @@
 -- Seguridad (Row Level Security):
 -- - Nadie puede leer ni escribir `leads` con la clave pública (anon).
 -- - Los leads los inserta solo la Edge Function `lead`, con la service role key.
--- - El dashboard /admin/ lee y cambia el estado solo si el usuario logueado está en `admins`.
+-- - El dashboard /admin/ lee, edita y borra leads solo si el usuario logueado está en `admins`.
 
 create table if not exists public.leads (
   id uuid primary key default gen_random_uuid(),
@@ -66,13 +66,18 @@ drop policy if exists "admins actualizan leads" on public.leads;
 create policy "admins actualizan leads" on public.leads
   for update to authenticated using (public.es_admin()) with check (public.es_admin());
 
+drop policy if exists "admins borran leads" on public.leads;
+create policy "admins borran leads" on public.leads
+  for delete to authenticated using (public.es_admin());
+
 -- Permisos explícitos: funcionan con "Automatically expose new tables" activado o no.
 -- - anon (visitantes): nada.
--- - authenticated (equipo logueado): leer leads y cambiar solo el estado; RLS limita a `admins`.
+-- - authenticated (equipo logueado): leer, editar los datos del lead y borrar; RLS limita a `admins`.
+--   No puede tocar id, creado, UTMs, página, token ni el estado de Brevo.
 -- - service_role (Edge Function `lead`): todo.
 revoke all on public.leads, public.admins from anon, authenticated;
-grant select on public.leads to authenticated;
-grant update (estado) on public.leads to authenticated;
+grant select, delete on public.leads to authenticated;
+grant update (nombre, email, celular, perfil, ciudad, empresa, etapa, m2, intereses, estado) on public.leads to authenticated;
 grant all on public.leads, public.admins to service_role;
 
 -- Agrega aquí los correos del equipo (los mismos con los que se crean los usuarios en

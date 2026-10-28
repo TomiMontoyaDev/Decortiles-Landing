@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { asset } from "@/lib/config";
-import { OPCIONES, etiqueta } from "@/lib/lead-schema";
+import { OPCIONES, etiqueta, leadCamposSchema } from "@/lib/lead-schema";
 import { COLUMNAS_LEAD, ESTADOS, supabase, type Lead } from "@/lib/supabase";
 
 const POR_PAGINA = 50;
@@ -179,6 +179,24 @@ function Dashboard() {
     }
   }
 
+  /** Devuelve el mensaje de error, o null si se guardó. */
+  async function guardarLead(id: string, cambios: Partial<Lead>) {
+    const { data, error } = await supabase()!.from("leads").update(cambios).eq("id", id).select(COLUMNAS_LEAD);
+    // Sin filas devueltas = RLS o permisos no lo dejaron (falta correr el SQL nuevo de schema.sql).
+    if (error || !data?.length) return `No se pudo guardar: ${error?.message ?? "sin permiso de edición en Supabase."}`;
+    setLeads((ls) => ls!.map((l) => (l.id === id ? (data[0] as Lead) : l)));
+    return null;
+  }
+
+  async function borrarLead(l: Lead) {
+    if (!window.confirm(`¿Borrar a ${l.nombre} (${l.email})?\n\nNo se puede deshacer.`)) return;
+    setError("");
+    const { data, error } = await supabase()!.from("leads").delete().eq("id", l.id).select("id");
+    if (error || !data?.length) return setError(`No se pudo borrar: ${error?.message ?? "sin permiso de borrado en Supabase."}`);
+    setLeads((ls) => ls!.filter((x) => x.id !== l.id));
+    setAbierto(null);
+  }
+
   const filtro = <K extends keyof Filtros>(k: K, v: string) => {
     setF((x) => ({ ...x, [k]: v }));
     setVisibles(POR_PAGINA);
@@ -276,7 +294,15 @@ function Dashboard() {
       ) : (
         <ul className="mt-3 divide-y divide-bone/10 border-y border-bone/10">
           {filtrados.slice(0, visibles).map((l) => (
-            <Fila key={l.id} lead={l} abierto={abierto === l.id} alternar={() => setAbierto(abierto === l.id ? null : l.id)} cambiarEstado={cambiarEstado} />
+            <Fila
+              key={l.id}
+              lead={l}
+              abierto={abierto === l.id}
+              alternar={() => setAbierto(abierto === l.id ? null : l.id)}
+              cambiarEstado={cambiarEstado}
+              guardar={(cambios) => guardarLead(l.id, cambios)}
+              borrar={() => borrarLead(l)}
+            />
           ))}
         </ul>
       )}
@@ -359,12 +385,17 @@ function Fila({
   abierto,
   alternar,
   cambiarEstado,
+  guardar,
+  borrar,
 }: {
   lead: Lead;
   abierto: boolean;
   alternar: () => void;
   cambiarEstado: (id: string, estado: string) => void;
+  guardar: (cambios: Partial<Lead>) => Promise<string | null>;
+  borrar: () => void;
 }) {
+  const [editando, setEditando] = useState(false);
   const wa = `https://wa.me/${l.celular.replace(/\D/g, "")}`;
   return (
     <li className="py-4">
@@ -409,19 +440,148 @@ function Fila({
           </button>
         </div>
       </div>
-      {abierto && (
-        <dl className="mt-4 grid gap-x-6 gap-y-3 bg-ink-2 p-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
-          <Dato k="Etapa" v={l.etapa && etiqueta("etapa", l.etapa)} />
-          <Dato k="m² estimados" v={l.m2 && etiqueta("m2", l.m2)} />
-          <Dato k="Intereses" v={l.intereses?.map((i) => etiqueta("intereses", i)).join(", ")} />
-          <Dato k="Origen" v={[l.utm_source, l.utm_medium].filter(Boolean).join(" / ")} />
-          <Dato k="Campaña" v={l.utm_campaign} />
-          <Dato k="Anuncio" v={[l.utm_content, l.utm_term].filter(Boolean).join(" · ")} />
-          <Dato k="Página" v={l.pagina} />
-          <Dato k="Brevo" v={l.brevo} />
-        </dl>
-      )}
+      {abierto &&
+        (editando ? (
+          <Editor lead={l} guardar={guardar} cerrar={() => setEditando(false)} />
+        ) : (
+          <div className="mt-4 bg-ink-2 p-4">
+            <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+              <Dato k="Etapa" v={l.etapa && etiqueta("etapa", l.etapa)} />
+              <Dato k="m² estimados" v={l.m2 && etiqueta("m2", l.m2)} />
+              <Dato k="Intereses" v={l.intereses?.map((i) => etiqueta("intereses", i)).join(", ")} />
+              <Dato k="Origen" v={[l.utm_source, l.utm_medium].filter(Boolean).join(" / ")} />
+              <Dato k="Campaña" v={l.utm_campaign} />
+              <Dato k="Anuncio" v={[l.utm_content, l.utm_term].filter(Boolean).join(" · ")} />
+              <Dato k="Página" v={l.pagina} />
+              <Dato k="Brevo" v={l.brevo} />
+            </dl>
+            <div className="mt-4 flex flex-wrap gap-2 border-t border-bone/10 pt-4">
+              <button onClick={() => setEditando(true)} className="min-h-11 border border-bone/25 px-4 text-sm font-semibold hover:border-bone">
+                Editar
+              </button>
+              <button onClick={borrar} className="min-h-11 border border-signal-soft/50 px-4 text-sm font-semibold text-signal-soft hover:border-signal-soft hover:bg-signal-strong hover:text-white">
+                Borrar
+              </button>
+            </div>
+          </div>
+        ))}
     </li>
+  );
+}
+
+// Mismas reglas del formulario público para los datos principales.
+const edicionSchema = leadCamposSchema.pick({ nombre: true, email: true, celular: true, perfil: true, ciudad: true });
+
+function Editor({ lead: l, guardar, cerrar }: { lead: Lead; guardar: (cambios: Partial<Lead>) => Promise<string | null>; cerrar: () => void }) {
+  const [v, setV] = useState({
+    nombre: l.nombre,
+    email: l.email,
+    celular: l.celular.replace(/^\+57/, ""),
+    perfil: l.perfil,
+    ciudad: l.ciudad,
+    empresa: l.empresa ?? "",
+    etapa: l.etapa ?? "",
+    m2: l.m2 ?? "",
+    intereses: l.intereses ?? [],
+  });
+  const [errores, setErrores] = useState<Record<string, string | undefined>>({});
+  const [error, setError] = useState("");
+  const [guardando, setGuardando] = useState(false);
+  const id = (c: string) => `editar-${l.id}-${c}`;
+  const cambiar = (c: keyof typeof v, valor: string) => setV((x) => ({ ...x, [c]: valor }));
+
+  async function enviar(ev: React.FormEvent) {
+    ev.preventDefault();
+    setError("");
+    const r = edicionSchema.safeParse(v);
+    if (!r.success) {
+      const e = r.error.flatten().fieldErrors;
+      return setErrores(Object.fromEntries(Object.entries(e).map(([k, m]) => [k, m?.[0]])));
+    }
+    setErrores({});
+    setGuardando(true);
+    const fallo = await guardar({
+      ...r.data,
+      empresa: v.empresa.replace(/\s+/g, " ").trim().slice(0, 120) || null,
+      etapa: v.etapa || null,
+      m2: v.m2 || null,
+      intereses: v.intereses.length ? v.intereses : null,
+    });
+    setGuardando(false);
+    if (fallo) setError(fallo);
+    else cerrar();
+  }
+
+  const campo = (c: "nombre" | "email" | "celular" | "empresa", label: string, type = "text") => (
+    <div>
+      <label htmlFor={id(c)} className="rotulo mb-1 block text-steel">
+        {label}
+      </label>
+      <input id={id(c)} className="campo" type={type} value={v[c]} onChange={(e) => cambiar(c, e.target.value)} aria-invalid={errores[c] ? true : undefined} />
+      {errores[c] && <p className="mt-1 text-[0.8rem] font-semibold text-signal-soft">{errores[c]}</p>}
+    </div>
+  );
+  const lista = (c: "perfil" | "ciudad" | "etapa" | "m2", label: string, opciones: readonly { value: string; label: string }[], vacio?: string) => (
+    <div>
+      <label htmlFor={id(c)} className="rotulo mb-1 block text-steel">
+        {label}
+      </label>
+      <select id={id(c)} className="campo" value={v[c]} onChange={(e) => cambiar(c, e.target.value)}>
+        {vacio && <option value="">{vacio}</option>}
+        {opciones.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      {errores[c] && <p className="mt-1 text-[0.8rem] font-semibold text-signal-soft">{errores[c]}</p>}
+    </div>
+  );
+
+  return (
+    <form onSubmit={enviar} noValidate className="mt-4 bg-ink-2 p-4" aria-label={`Editar a ${l.nombre}`}>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {campo("nombre", "Nombre")}
+        {campo("email", "Correo", "email")}
+        {campo("celular", "Celular", "tel")}
+        {lista("perfil", "Perfil", OPCIONES.perfil)}
+        {lista("ciudad", "Ciudad", OPCIONES.ciudad)}
+        {campo("empresa", "Empresa")}
+        {lista("etapa", "Etapa", OPCIONES.etapa, "Sin definir")}
+        {lista("m2", "m² estimados", OPCIONES.m2, "Sin definir")}
+      </div>
+      <fieldset className="mt-3">
+        <legend className="rotulo mb-1.5 text-steel">Intereses</legend>
+        <div className="flex flex-wrap gap-2">
+          {OPCIONES.intereses.map((o) => (
+            <label key={o.value} className="flex min-h-11 cursor-pointer items-center gap-2 border border-bone/25 px-3 text-sm has-[:checked]:border-bone has-[:checked]:bg-bone has-[:checked]:text-ink">
+              <input
+                type="checkbox"
+                className="size-4 accent-ink"
+                checked={v.intereses.includes(o.value)}
+                onChange={() =>
+                  setV((x) => ({ ...x, intereses: x.intereses.includes(o.value) ? x.intereses.filter((i) => i !== o.value) : [...x.intereses, o.value] }))
+                }
+              />
+              {o.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <div className="mt-4 flex flex-wrap gap-2 border-t border-bone/10 pt-4">
+        <button type="submit" disabled={guardando} className="min-h-11 bg-signal-strong px-5 text-sm font-bold text-white hover:bg-signal disabled:opacity-60">
+          {guardando ? "Guardando…" : "Guardar cambios"}
+        </button>
+        <button type="button" onClick={cerrar} className="min-h-11 border border-bone/25 px-4 text-sm font-semibold hover:border-bone">
+          Cancelar
+        </button>
+      </div>
+      {error && (
+        <p role="alert" className="mt-3 text-sm font-semibold text-signal-soft">
+          {error}
+        </p>
+      )}
+    </form>
   );
 }
 
