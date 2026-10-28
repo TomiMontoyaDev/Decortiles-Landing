@@ -14,7 +14,7 @@ const FUENTE = "landing-proyectos";
 const MS_MINIMO = 2500;
 const ENVIOS_POR_CORREO = 3; // por cada 10 minutos
 const TOKEN_HORAS = 2;
-const ERROR_GENERICO = "No pudimos registrar tus datos. Intenta de nuevo o escríbenos por WhatsApp.";
+const ERROR_GENERICO = "No pudimos registrar tus datos. Intenta de nuevo.";
 
 // Mismos valores que lib/lead-schema.ts (OPCIONES).
 const ETIQUETAS: Record<string, Record<string, string>> = {
@@ -119,7 +119,7 @@ async function registro(b: Body): Promise<Resultado> {
   const hace10min = new Date(Date.now() - 10 * 60 * 1000).toISOString();
   const { count } = await db.from("leads").select("id", { count: "exact", head: true }).eq("email", lead.email).gte("creado", hace10min);
   if ((count ?? 0) >= ENVIOS_POR_CORREO) {
-    return { ok: false, error: "Demasiados intentos. Espera unos minutos o escríbenos por WhatsApp." };
+    return { ok: false, error: "Demasiados intentos. Espera unos minutos." };
   }
 
   const t = (b.tracking && typeof b.tracking === "object" ? b.tracking : {}) as Body;

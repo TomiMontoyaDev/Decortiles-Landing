@@ -82,7 +82,8 @@ export function trackLead(perfil: string, eventId: string) {
   if (GADS_CONVERSION) gtag("event", "conversion", { send_to: GADS_CONVERSION, transaction_id: eventId });
 }
 
-export function trackContact(perfil: string, origen: string) {
-  fbq("track", "Contact", { content_category: perfil });
-  gtag("event", "contact", { perfil, method: "whatsapp", origen });
+/** Clic en "Abrir catálogo" después del registro. */
+export function trackCatalogo(perfil: string, origen: string) {
+  fbq("track", "ViewContent", { content_name: "catalogo-digital", content_category: perfil });
+  gtag("event", "select_content", { content_type: "catalogo-digital", perfil, origen });
 }

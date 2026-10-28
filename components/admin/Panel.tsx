@@ -39,7 +39,7 @@ export default function Panel() {
   const salir = () => sb?.auth.signOut();
 
   return (
-    <div className="min-h-dvh pb-[max(3rem,env(safe-area-inset-bottom))]">
+    <div className="min-h-dvh bg-ink pb-[max(3rem,env(safe-area-inset-bottom))] text-bone">
       <header className="border-b border-bone/10">
         <div className="contenedor flex min-h-16 items-center justify-between gap-3 pt-[env(safe-area-inset-top)]">
           <Link href="/" className="flex items-center gap-2.5" aria-label="Volver a la landing">

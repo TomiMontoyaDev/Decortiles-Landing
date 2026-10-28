@@ -16,17 +16,17 @@ const VIGENCIA = "[fecha pendiente]";
 export default function PoliticaDatos() {
   return (
     <main className="contenedor max-w-3xl pt-[max(3rem,env(safe-area-inset-top))] pb-[max(3rem,env(safe-area-inset-bottom))] sm:py-20">
-      <Link href="/" className="rotulo -ml-1 inline-flex min-h-11 items-center px-1 text-steel hover:text-bone">
+      <Link href="/" className="rotulo -ml-1 inline-flex min-h-11 items-center px-1 text-ink/60 hover:text-ink">
         ← Volver
       </Link>
       {process.env.NODE_ENV !== "production" && (
-        <p className="mt-6 border border-signal p-3 text-sm text-bone">
+        <p className="mt-6 border border-signal p-3 text-sm text-ink">
           Borrador: texto base pendiente de revisión legal. Este aviso solo se ve en desarrollo.
         </p>
       )}
-      <h1 className="display t-h2 mt-6 text-bone">Política de tratamiento de datos personales</h1>
+      <h1 className="display t-h2 mt-6 text-ink">Política de tratamiento de datos personales</h1>
 
-      <div className="mt-10 space-y-8 text-[0.98rem] leading-relaxed text-bone/85 [overflow-wrap:anywhere] [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-bone [&_li]:ml-5 [&_li]:list-disc [&_ul]:space-y-1.5">
+      <div className="mt-10 space-y-8 text-[0.98rem] leading-relaxed text-ink/80 [overflow-wrap:anywhere] [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-ink [&_li]:ml-5 [&_li]:list-disc [&_ul]:space-y-1.5">
         <section>
           <h2>1. Responsable del tratamiento</h2>
           <p>

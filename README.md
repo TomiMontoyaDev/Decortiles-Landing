@@ -42,7 +42,7 @@ Las claves de Brevo **no van en el sitio estático** (quedarían públicas): van
 | Variable | Dónde | Obligatoria | Descripción |
 |---|---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | público | sí | `https://proyectos.decorcolombiatiles.com`. Se usa en la URL absoluta de la OG image y en el redirect del double opt-in. |
-| `NEXT_PUBLIC_WHATSAPP` | público | sí | `573128019754`, solo dígitos y con el 57. Lo usan todos los botones de WhatsApp y los mensajes prellenados por perfil. Si falta, se usa ese mismo número. **En las plantillas de `emails/` el número está escrito en el HTML: si cambia, hay que actualizarlo allá también** (enlaces `wa.me/…` y pie de cada correo). |
+| `NEXT_PUBLIC_WHATSAPP` | público | sí | `573128019754`, solo dígitos y con el 57. La landing ya no enlaza a WhatsApp; el número solo aparece en la política de datos. Si falta, se usa ese mismo número. **En las plantillas de `emails/` el número está escrito en el HTML: si cambia, hay que actualizarlo allá también** (enlaces `wa.me/…` y pie de cada correo). |
 | `BREVO_API_KEY` | servidor | sí | API key v3 (Brevo → SMTP & API → API Keys). |
 | `BREVO_LIST_ID` | servidor | sí | Id numérico de la lista "Landing Proyectos". |
 | `BREVO_DOI_TEMPLATE_ID` | servidor | no | Si se define, se activa el double opt-in con esa plantilla. |
@@ -70,9 +70,11 @@ Cada anuncio apunta a la misma URL con un `perfil` distinto:
 | Diseñador | `…/?perfil=disenador&…` (también acepta `diseñador`) |
 | Contratista | `…/?perfil=contratista&…` |
 
-- El copy de cada perfil (H1, subtítulo, beneficios, CTA, cierre y mensaje de WhatsApp) está en **`content/perfiles.ts`**. Se edita sin tocar componentes.
-- Los productos y sus datos técnicos están en `content/productos.ts`. La landing muestra solo los 4 de `DESTACADOS` y las 4 fotos de `AMBIENTES_LANDING`; para cambiarlos se edita esa lista. Los datos del negocio (sedes, WhatsApp, horario) están en `content/negocio.ts`.
-- **Versión corta** (pedida por gerencia, 28/10/2026): hero con formulario, barra de prueba, 3 frases de por qué, 4 productos, 4 fotos y cierre. Los textos de "beneficios" por perfil siguen en `perfiles.ts` aunque ya no se muestran.
+- El copy de cada perfil (etiqueta, H1, subtítulo, CTA y cierre) está en **`content/perfiles.ts`**. Se edita sin tocar componentes. El H1, el subtítulo y el CTA son los aprobados por gerencia e iguales para todos los perfiles.
+- Los productos y sus datos técnicos están en `content/productos.ts`. La landing muestra solo los 4 de `DESTACADOS` y las 4 fotos de `AMBIENTES_LANDING`; para cambiarlos se edita esa lista. Los datos del negocio (sedes, horario, **URL del catálogo digital**) están en `content/negocio.ts`.
+- **Oferta: catálogo digital** (gerencia, 28/10/2026). Quien se registra ve el botón **Abrir catálogo**, que abre `https://decortiles-catalogo.vercel.app/` en otra pestaña. La URL está en `NEGOCIO.catalogo`.
+- **Fondo claro** y sin promesas de stock, lote, despacho ni "+90 referencias". **Sin enlaces a WhatsApp** en la landing (solo el panel /admin/ y el aviso a ventas los usan, para contactar al lead).
+- Estructura: hero con formulario, barra de datos, qué trae el catálogo, 4 productos, 4 fotos y cierre con el formulario repetido.
 - En el sitio estático, un script al inicio de `/` redirige `/?perfil=x` a `/p/x/` conservando las UTMs (con servidor lo hace `middleware.api.ts` sin cambiar la URL).
 - Se capturan `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `gclid` y `fbclid`. Se guardan en `sessionStorage` y viajan con el lead.
 
@@ -230,7 +232,7 @@ Automation → *Contact added to a list* (Landing Proyectos):
 |---|---|---|
 | Carga | `PageView` + `ViewContent` (`content_category` = perfil) | `view_item` |
 | Lead enviado | `Lead` (`content_category` = perfil, `eventID`) | `generate_lead` (`perfil`) + `conversion` (`send_to` = `NEXT_PUBLIC_GADS_CONVERSION`) |
-| Clic en WhatsApp | `Contact` | `contact` |
+| Clic en **Abrir catálogo** | `ViewContent` (`content_name` = catalogo-digital) | `select_content` (`content_type` = catalogo-digital) |
 
 - Si una variable no está definida, ese script no se carga.
 - Las librerías cargan con `lazyOnload` para no penalizar Lighthouse. Los eventos quedan en cola hasta que cargan.
@@ -302,7 +304,7 @@ Mobile-first, verificado en 320, 360, 375, 390, 414, 768, 1024, 1280, 1440 y 192
   - Los intereses son chips de 44 px en grilla, para tocar con el dedo.
 - **Productos:** 4 destacados; 1 columna en móvil (tarjeta horizontal), 2 en tablet y 4 en desktop.
 - **Galería:** 4 fotos; carrusel con scroll-snap en móvil, 2 columnas en tablet y 4 en desktop.
-- **WhatsApp flotante** (solo móvil): se oculta mientras hay un formulario o el footer en pantalla, así que nunca tapa el botón de enviar. Respeta `env(safe-area-inset-*)`, gracias a `viewport-fit=cover`. El contenedor también respeta el notch en horizontal.
+- El contenedor respeta el notch en horizontal (`env(safe-area-inset-*)`, gracias a `viewport-fit=cover`).
 - `100dvh` en las secciones de alto completo (`/confirmado`). Hay `sizes` en cada `next/image`: en un móvil de 375 px a 2× los productos bajan a 384 px y la galería a 640 px.
 - Se respeta `prefers-reduced-motion`: se desactivan las animaciones, las transiciones y el scroll suave.
 
@@ -331,13 +333,10 @@ El código de servidor sigue en el repo por si algún día se necesita (por ejem
 ## 13. TODO que dependen del cliente
 
 **Antes de lanzar pauta:**
-- [ ] Confirmar la promesa **"un solo lote para toda la torre"** y **"separamos el metraje completo del mismo lote"** (`content/perfiles.ts`, hero de constructora y bloque 2 de Problema → Solución; también aparece en los emails 02 y 03).
-- [ ] Confirmar **precios por volumen**: si existen y desde qué metraje aplican (beneficio "Precios por volumen", hero de contratista, email 01).
-- [ ] Confirmar el alcance del **acompañamiento en especificación**: si incluye visita a obra o es solo asesoría.
-- [ ] Confirmar las condiciones de **despacho** desde Medellín y Barranquilla (hero de contratista).
 - [ ] Completar el **acabado** de Black Empire, Vibren Sky, Fachada Chennai y Cristanac Opal Blue. El sitio no lo especifica y hoy aparece "Consultar" (`content/productos.ts`).
 - [ ] Confirmar que `ambientes/interior.jpg` es un **proyecto real**. Parece un render o foto de stock y está en "Proyectos instalados".
-- [ ] Confirmar la **línea de WhatsApp** de proyectos. Hoy es +57 312 801 9754 (`NEXT_PUBLIC_WHATSAPP`); la línea +57 301 331 0178 ya no aparece en la landing ni en los correos.
+- [ ] **Emails 01–04:** todavía hablan de stock y tienen botones de WhatsApp. Ajustarlos al nuevo enfoque (catálogo) antes de activar las automatizaciones.
+- [ ] Confirmar la **línea de WhatsApp** de proyectos (solo política de datos y emails). Hoy es +57 312 801 9754 (`NEXT_PUBLIC_WHATSAPP`); la línea +57 301 331 0178 ya no aparece en la landing ni en los correos.
 - [ ] **Revisión legal** de `/politica-de-datos`: completar el NIT y la fecha de vigencia y validar con un abogado.
 - [ ] Llenar las tablas de stock (`[000]`, `[fecha]`) y revisar las tendencias del mes en los emails 02 y 03 antes de cada envío.
 
@@ -360,7 +359,7 @@ app/
   confirmado/             destino del double opt-in
   admin/                  dashboard de leads (login con Supabase)
   opengraph-image.tsx     OG image 1200×630 generada en build
-components/               Landing (secciones), LeadForm (2 pasos), WhatsAppFab, WhatsAppLink, Analytics…
+components/               Landing (secciones), LeadForm (2 pasos + Abrir catálogo), admin/Panel, Analytics…
 content/                  perfiles.ts · productos.ts · negocio.ts   ← todo el copy editable
 lib/                      lead-schema (zod) · brevo · tracking · utm · rate-limit · token · meta-capi
 emails/                   01–04 plantillas HTML para Brevo

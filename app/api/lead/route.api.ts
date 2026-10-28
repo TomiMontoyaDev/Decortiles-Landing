@@ -23,7 +23,7 @@ import { enviarLeadMeta } from "@/lib/meta-capi";
 
 export const runtime = "nodejs";
 
-const ERROR_GENERICO = "No pudimos registrar tus datos. Intenta de nuevo o escríbenos por WhatsApp.";
+const ERROR_GENERICO = "No pudimos registrar tus datos. Intenta de nuevo.";
 
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status });
 
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 async function manejar(req: NextRequest) {
   const ip = ipDe(req);
   if (!permitido(ip)) {
-    return json({ ok: false, error: "Demasiados intentos. Espera unos minutos o escríbenos por WhatsApp." }, 429);
+    return json({ ok: false, error: "Demasiados intentos. Espera unos minutos." }, 429);
   }
 
   let body: unknown;

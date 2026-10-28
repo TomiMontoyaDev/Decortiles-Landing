@@ -12,9 +12,9 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://proyectos.decorcol
 export const metadata: Metadata = {
   // Solo el origen: Next agrega el basePath a las rutas de metadata por su cuenta.
   metadataBase: new URL(new URL(SITE_URL).origin),
-  title: "DECORTILES Proyectos · Porcelanato y cerámica con stock local",
+  title: "DECORTILES · Catálogo digital de porcelanatos, pisos y revestimientos",
   description:
-    "Importación directa de porcelanato 60×120, pisos de alto tránsito, revestimientos y sanitarios. Stock en Medellín y Barranquilla para constructoras, arquitectos, diseñadores y contratistas.",
+    "Recibe el catálogo digital de DECORTILES: porcelanatos, pisos y revestimientos de importación directa. Diseños, formatos y referencias para tu proyecto.",
   // Landing exclusiva para pauta: no se indexa.
   robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
   openGraph: {
@@ -22,15 +22,15 @@ export const metadata: Metadata = {
     locale: "es_CO",
     url: "/",
     siteName: "DECORTILES",
-    title: "Acabados con stock. No con promesas.",
-    description: "Porcelanato, cerámica y sanitarios de importación directa. Stock en Medellín y Barranquilla.",
+    title: "Tu próximo proyecto empieza con una buena selección de materiales.",
+    description: "Recibe el catálogo digital de porcelanatos, pisos y revestimientos de DECORTILES.",
   },
   twitter: { card: "summary_large_image" },
   icons: { icon: asset("/images/logo.png"), apple: asset("/images/logo.png") },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a1424",
+  themeColor: "#f2eee6",
   width: "device-width",
   initialScale: 1,
   // Habilita env(safe-area-inset-*) en iPhone (notch y barra inferior).

@@ -5,17 +5,16 @@ import { useEffect, useRef, useState } from "react";
 import type { PerfilId } from "@/content/perfiles";
 import { LEAD_ENDPOINT } from "@/lib/config";
 import { OPCIONES, leadCamposSchema, perfilamientoSchema } from "@/lib/lead-schema";
-import { nuevoEventId, trackLead } from "@/lib/tracking";
+import { NEGOCIO } from "@/content/negocio";
+import { nuevoEventId, trackCatalogo, trackLead } from "@/lib/tracking";
 import { capturarTracking } from "@/lib/utm";
 import { useLead } from "./LeadContext";
-import WhatsAppLink, { IconoChat } from "./WhatsAppLink";
 
 interface Props {
   /** Prefijo único para los ids de los campos (hay dos formularios en la página). */
   id: string;
   perfil: PerfilId;
   cta: string;
-  whatsapp: string;
 }
 
 type Valores = {
@@ -32,7 +31,7 @@ type Campo = keyof Valores;
 type Errores = Partial<Record<Campo, string>>;
 
 const ORDEN: Campo[] = ["nombre", "celular", "email", "perfil", "ciudad", "autorizacion"];
-const ERROR_RED = "No hay conexión. Revisa tu internet o escríbenos por WhatsApp.";
+const ERROR_RED = "No hay conexión. Revisa tu internet.";
 // JSON enviado como text/plain: así el navegador no hace preflight CORS hacia la Edge
 // Function de Supabase (otro dominio) y el envío es más rápido. /api/lead lo lee igual.
 const TEXTO_PLANO = { "content-type": "text/plain;charset=utf-8" };
@@ -45,19 +44,19 @@ function primerosErrores(campos: Partial<Record<string, string[] | undefined>>):
   return out;
 }
 
-export default function LeadForm({ id, perfil, cta, whatsapp }: Props) {
+export default function LeadForm({ id, perfil, cta }: Props) {
   const { lead } = useLead();
   return (
-    <div className="bg-bone text-ink shadow-[0_30px_80px_-30px_rgb(0_0_0/0.7)]">
+    <div className="border border-ink/10 bg-white text-ink shadow-[0_24px_60px_-28px_rgb(10_20_36/0.35)]">
       <div className="h-1.5 bg-signal" aria-hidden />
       <div className="p-4 min-[360px]:p-5 sm:p-7">
-        {lead ? <Gracias id={id} perfil={perfil} whatsapp={whatsapp} /> : <Registro id={id} perfil={perfil} cta={cta} whatsapp={whatsapp} />}
+        {lead ? <Gracias id={id} perfil={perfil} /> : <Registro id={id} perfil={perfil} cta={cta} />}
       </div>
     </div>
   );
 }
 
-function Registro({ id, perfil, cta, whatsapp }: Props) {
+function Registro({ id, perfil, cta }: Props) {
   const { setLead } = useLead();
   const [v, setV] = useState<Valores>({
     nombre: "",
@@ -133,7 +132,7 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
       if (!res.ok || !data.ok) {
         const e = data.campos ? primerosErrores(data.campos) : {};
         setErrores(e);
-        setErrorGeneral(data.error ?? "No pudimos registrar tus datos. Intenta de nuevo o escríbenos por WhatsApp.");
+        setErrorGeneral(data.error ?? "No pudimos registrar tus datos. Intenta de nuevo.");
         setEnviando(false);
         return;
       }
@@ -160,12 +159,12 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
 
   return (
     <form ref={form} onSubmit={enviar} noValidate aria-labelledby={`${id}-titulo`}>
-      <p className="rotulo text-signal-strong">Registro para profesionales</p>
+      <p className="rotulo text-signal-strong">Catálogo digital</p>
       <h2 id={`${id}-titulo`} className="display mt-1.5 text-[clamp(1.5rem,1.25rem+1vw,2rem)] text-ink">
-        Stock, tendencias y fichas en tu correo
+        Recibe el catálogo
       </h2>
       <p className="mt-1.5 text-[0.85rem] leading-snug text-ink/70 max-[379px]:hidden sm:text-sm">
-        Un correo al mes y alertas cuando llega material. Te das de baja con un clic.
+        Déjanos tus datos y ábrelo al instante. Solo te escribimos con novedades; te das de baja con un clic.
       </p>
 
       {/* Nombre/celular en una columna por debajo de 360 px; perfil y ciudad siempre en dos (selects cortos). */}
@@ -327,23 +326,11 @@ function Registro({ id, perfil, cta, whatsapp }: Props) {
       <p role="alert" aria-live="assertive" className="mt-3 text-sm font-semibold text-error empty:hidden">
         {errorGeneral}
       </p>
-
-      <p className="mt-2 flex flex-wrap items-center justify-center gap-x-1 text-center text-[0.8rem] text-ink/70">
-        ¿Prefieres hablar ya?
-        <WhatsAppLink
-          mensaje={whatsapp}
-          perfil={perfil}
-          origen={`${id}-form`}
-          className="inline-flex min-h-11 items-center px-1 font-semibold text-ink underline underline-offset-2"
-        >
-          Escríbenos por WhatsApp
-        </WhatsAppLink>
-      </p>
     </form>
   );
 }
 
-function Gracias({ id, perfil, whatsapp }: Omit<Props, "cta">) {
+function Gracias({ id, perfil }: Omit<Props, "cta">) {
   const { lead, perfilCompleto } = useLead();
   const titulo = useRef<HTMLHeadingElement>(null);
   const esOrigen = lead?.origen === id;
@@ -361,18 +348,20 @@ function Gracias({ id, perfil, whatsapp }: Omit<Props, "cta">) {
         Listo, {lead.nombre}.
       </h2>
       <p className="mt-2 text-[0.95rem] leading-relaxed text-ink/80">
-        Revisa tu correo <strong className="text-ink [overflow-wrap:anywhere]">{lead.email}</strong> (y la carpeta de promociones).
-        Si necesitas cotizar hoy, no esperes el correo:
+        Tu catálogo digital ya está disponible. Ábrelo y guárdalo en favoritos para tenerlo a mano.
       </p>
-      <WhatsAppLink
-        mensaje={whatsapp}
-        perfil={perfil}
-        origen={`${id}-gracias`}
-        className="mt-4 flex min-h-14 w-full items-center justify-center gap-2.5 bg-ink px-5 text-center text-base font-bold text-bone transition-colors hover:bg-signal-strong"
+      <a
+        href={NEGOCIO.catalogo}
+        target="_blank"
+        rel="noopener"
+        onClick={() => trackCatalogo(perfil, id)}
+        className="group mt-4 flex min-h-14 w-full items-center justify-between gap-3 bg-signal-strong px-5 text-base font-bold text-white transition-colors hover:bg-ink"
       >
-        <IconoChat />
-        Cotizar ya por WhatsApp
-      </WhatsAppLink>
+        Abrir catálogo
+        <span aria-hidden className="text-xl transition-transform group-hover:translate-x-1">
+          ↗
+        </span>
+      </a>
       {lead.token && (perfilCompleto ? <PerfilListo /> : <Perfilamiento id={id} />)}
     </div>
   );
