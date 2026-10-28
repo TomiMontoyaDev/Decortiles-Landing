@@ -1,4 +1,5 @@
 # Render Blueprint: la landing como Static Site (HTML puro, sin servidor que se duerma).
+# Publicada en https://decortiles-landing.onrender.com (dashboard: /admin/).
 # Render → New → Blueprint → elegir este repo. Las variables con `sync: false` se piden
 # en el panel al crear el servicio (no se guardan en git).
 # Formulario y dashboard /admin/ usan Supabase: ver README, sección 4.
@@ -6,7 +7,7 @@ services:
   - type: web
     name: decortiles-landing
     runtime: static
-    buildCommand: npm ci --include=dev && npm run build:static
+    buildCommand: npm ci --include=dev && npm run build
     staticPublishPath: ./out
     headers:
       # Landing solo para pauta: que ningún buscador la indexe.
@@ -16,15 +17,18 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
+      # https://decortiles-landing.onrender.com; con el dominio final: https://proyectos.decorcolombiatiles.com
       - key: NEXT_PUBLIC_SITE_URL
-        value: https://proyectos.decorcolombiatiles.com
+        value: https://decortiles-landing.onrender.com
       - key: NEXT_PUBLIC_WHATSAPP
         value: "573128019754"
-      # Supabase → Project Settings → API.
+      # Supabase (públicas; los datos los protege RLS).
       - key: NEXT_PUBLIC_SUPABASE_URL
-        sync: false
+        value: https://ufhkwmszrzdbprodzxaf.supabase.co
       - key: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-        sync: false
+        value: sb_publishable_oNlHCnkGcaNayKxxeF0s7g_3XCTyP0D
+      - key: NEXT_PUBLIC_LEAD_ENDPOINT
+        value: https://ufhkwmszrzdbprodzxaf.supabase.co/functions/v1/swift-task
       - key: NEXT_PUBLIC_META_PIXEL_ID
         sync: false
       - key: NEXT_PUBLIC_GA_ID
